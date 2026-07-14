@@ -632,6 +632,22 @@
       "id": "cat_011",
       "name": "离职结算",
       "description": "各国离职结算、遣散费、退职金等相关规定"
+    },
+    {
+      "id": "cat_012",
+      "name": "休假",
+      "description": "各类假期规定",
+      "subcategories": [
+        {"id": "sub_001", "name": "年假", "description": "带薪年休假"},
+        {"id": "sub_002", "name": "病假", "description": "带薪病假"},
+        {"id": "sub_003", "name": "产假", "description": "女性产假"},
+        {"id": "sub_004", "name": "陪产假", "description": "男性陪产假"},
+        {"id": "sub_005", "name": "育儿假", "description": "育儿假"},
+        {"id": "sub_006", "name": "领养假", "description": "领养假"},
+        {"id": "sub_007", "name": "婚假", "description": "婚假"},
+        {"id": "sub_008", "name": "丧假", "description": "丧假"},
+        {"id": "sub_009", "name": "其他假期", "description": "其他类型的假期"}
+      ]
     }
   ],
   "countries": [

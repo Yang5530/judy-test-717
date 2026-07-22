@@ -98,7 +98,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 
 /* ========== CENTER COLUMN ========== */
 .center{display:flex;flex-direction:column;overflow:hidden}
-.center-hero{flex-sh1:0;padding:16px 20px 12px}
+.center-hero{flex-shrink:0;padding:16px 20px 12px}
 .hero-title{font-size:1.05rem;font-weight:800;margin-bottom:2px;display:flex;align-items:center;gap:8px}
 .hero-title .ai-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(6,182,212,0.5)}50%{opacity:0.8;box-shadow:0 0 0 6px rgba(6,182,212,0)}}
@@ -106,7 +106,26 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 .hero-chips{display:flex;gap:4px;flex-wrap:wrap}
 .chip{padding:4px 10px;border-radius:12px;font-size:0.65rem;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);transition:all .2s}
 .chip:hover,.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-.center-timeline{flex:1;overflow-y:auto;padding:0 20px 16px}
+.center-split{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.center-top{flex:1;min-height:0;overflow-y:auto;padding:0 20px 8px}
+.center-bottom{flex:1;min-height:0;border-top:1px solid var(--border);overflow-y:auto;padding:12px 20px;display:flex;gap:16px}
+.center-bottom .db-info{flex:1;min-width:0}
+.center-bottom .db-ai{flex:1;min-width:0;border-left:1px solid var(--border);padding-left:16px}
+.detail-row{margin-bottom:8px}
+.detail-label{font-size:0.6rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px}
+.detail-value{font-size:0.75rem;color:var(--text);line-height:1.5}
+.detail-value a{color:var(--accent);text-decoration:none;font-size:0.7rem}
+.detail-value a:hover{text-decoration:underline}
+.detail-tag{display:inline-block;font-size:0.6rem;padding:3px 8px;border-radius:10px;margin:2px 4px 2px 0}
+.detail-tag.mod{background:rgba(6,182,212,0.12);color:var(--accent);border:1px solid rgba(6,182,212,0.25)}
+.detail-tag.high{background:rgba(239,68,68,0.12);color:var(--high);border:1px solid rgba(239,68,68,0.25)}
+.detail-tag.medium{background:rgba(245,158,11,0.12);color:var(--medium);border:1px solid rgba(245,158,11,0.25)}
+.detail-tag.low{background:rgba(34,197,94,0.12);color:var(--low);border:1px solid rgba(34,197,94,0.25)}
+.detail-check{font-size:0.72rem;color:var(--text2);margin-bottom:5px;display:flex;align-items:flex-start;gap:6px}
+.detail-check::before{content:'✔';color:var(--low);font-weight:700;flex-shrink:0}
+.detail-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:0.78rem;font-style:italic}
+.ai-section-title{font-size:0.72rem;font-weight:700;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ai-section-title .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
 .tl-group{margin-bottom:16px}
 .tl-year{font-size:0.72rem;font-weight:800;color:var(--accent);padding:4px 0;display:flex;align-items:center;gap:8px}
 .tl-year::after{content:'';flex:1;height:1px;background:var(--border)}
@@ -261,7 +280,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
       <div class="hero-sub" data-i18n="heroSub">AI automatically monitors employment law updates across supported countries</div>
       <div class="hero-chips" id="heroChips"></div>
     </div>
-    <div class="center-timeline" id="timeline"></div>
+    <div class="center-split">
+      <div class="center-top" id="timeline"></div>
+      <div class="center-bottom" id="detailPanel">
+        <div class="detail-empty" data-i18n="selectLaw">← 从上方列表选择一条法规查看详情</div>
+      </div>
+    </div>
   </div>
 
   <!-- RIGHT -->
@@ -343,7 +367,7 @@ const i18n = {
     离职与遣散:'离职与遣散', 个税:'个税', 培训发展:'培训发展',
     年假:'年假', 病假:'病假', 产假:'产假', 赔偿金:'赔偿金', 育儿假:'育儿假', 丧假:'丧假', 婚假:'婚假', 其他假期:'其他假期',
     社保规定:'社保规定', 工作时间:'工作时间', 入职离职:'入职离职', 离职结算:'离职结算', 劳动合同:'劳动合同', 工资:'工资',
-    today:'今天', yesterday:'昨天', thisWeek:'本周', earlier:'更早',
+    today:'今天', yesterday:'昨天', thisWeek:'本周', earlier:'更早', selectLaw:'← 从上方列表选择一条法规查看详情',
     viewDetails:'查看详情', effective:'生效', published:'发布', impact:'影响', modules:'受影响模块',
     aiSummary:'AI 摘要', aiRecommendation:'AI 建议', officialSource:'官方来源', article:'条款',
     原文:'原文', 中文翻译:'中文翻译', 变更历史:'变更历史', 查看官方:'查看官方',
@@ -366,7 +390,7 @@ const i18n = {
     离职与遣散:'Termination', 个税:'Income Tax', 培训发展:'Training',
     年假:'Annual', 病假:'Sick', 产假:'Maternity', 赔偿金:'Severance', 育儿假:'Childcare', 丧假:'Bereavement', 婚假:'Marriage', 其他假期:'Other',
     社保规定:'Social Security', 工作时间:'Working Hours', 入职离职:'Hiring & Exit', 离职结算:'Exit Settlement', 劳动合同:'Contract', 工资:'Wages',
-    today:'Today', yesterday:'Yesterday', thisWeek:'This Week', earlier:'Earlier',
+    today:'Today', yesterday:'Yesterday', thisWeek:'This Week', earlier:'Earlier', selectLaw:'← Select a regulation from the list above',
     viewDetails:'View Details', effective:'Effective', published:'Published', impact:'Impact', modules:'Modules',
     aiSummary:'AI Summary', aiRecommendation:'AI Recommendation', officialSource:'Official Source', article:'Article',
     原文:'Original', 中文翻译:'Translation', 变更历史:'History', 查看官方:'Official',
@@ -389,7 +413,7 @@ const i18n = {
     离职与遣散:'Terminación', 个税:'Impuestos', 培训发展:'Capacitación',
     年假:'Anual', 病假:'Enfermedad', 产假:'Maternidad', 赔偿金:'Indemnización', 育儿假:'Parental', 丧假:'Duelo', 婚假:'Boda', 其他假期:'Otros',
     社保规定:'Seg. Social', 工作时间:'Jornada', 入职离职:'Altas/Bajas', 离职结算:'Liquidación', 劳动合同:'Contrato', 工资:'Salario',
-    today:'Hoy', yesterday:'Ayer', thisWeek:'Esta semana', earlier:'Anterior',
+    today:'Hoy', yesterday:'Ayer', thisWeek:'Esta semana', earlier:'Anterior', selectLaw:'← Seleccione una regulación de la lista',
     viewDetails:'Ver detalles', effective:'Vigente', published:'Publicado', impact:'Impacto', modules:'Módulos',
     aiSummary:'Resumen IA', aiRecommendation:'Recomendación IA', officialSource:'Fuente oficial', article:'Artículo',
     原文:'Original', 中文翻译:'Traducción', 变更历史:'Historial', 查看官方:'Oficial',
@@ -543,6 +567,8 @@ function selectTreeItem(el, cat, sub) {
   el.classList.add('active');
   currentCategory = cat; currentSubcategory = sub;
   applyFilters();
+  // Auto-select first visible law
+  if (filteredData.length > 0) { expandedCard = filteredData[0].id; renderTimeline(); renderDetail(filteredData[0].id); }
 }
 
 // ============ FILTERS ============
@@ -565,6 +591,11 @@ function applyFilters() {
   filteredData.sort((a,b) => sortBy === 'country' ? a.country.localeCompare(b.country) : b.lastUpdated.localeCompare(a.lastUpdated));
   renderTimeline();
   renderRightPanel();
+  // Auto-select first if nothing selected or selection not in filtered
+  if (!expandedCard || !filteredData.find(d=>d.id===expandedCard)) {
+    if (filteredData.length > 0) { expandedCard = filteredData[0].id; renderDetail(filteredData[0].id); }
+    else { expandedCard = null; renderDetail(null); }
+  }
 }
 
 // ============ POPULATE FILTERS ============
@@ -625,7 +656,39 @@ function renderTimeline() {
         </div>`).join('')}
     </div>`).join('');
 }
-function toggleTlCard(id) { expandedCard = expandedCard === id ? null : id; renderTimeline(); }
+function toggleTlCard(id) { expandedCard = id; renderTimeline(); renderDetail(id); }
+
+// ============ DETAIL PANEL ============
+function renderDetail(id) {
+  const item = laborLawData.find(d => d.id === id);
+  if (!item) { document.getElementById('detailPanel').innerHTML = '<div class="detail-empty" data-i18n="selectLaw">← 从上方列表选择一条法规查看详情</div>'; return; }
+  const ai = aiMonitorData.find(a => a.country === item.country);
+  const lang = currentLang;
+  const isEn = lang === 'en' || lang === 'es';
+  document.getElementById('detailPanel').innerHTML = `
+    <div class="db-info">
+      <div class="ai-section-title"><span class="ai-dot"></span>📄 ${isEn?'Employment Law Details':'法规详情'}</div>
+      <div class="detail-row"><div class="detail-label">${isEn?'Country':'国家'}</div><div class="detail-value">${item.flag} ${item.country}</div></div>
+      <div class="detail-row"><div class="detail-label">${isEn?'Law Title':'法律名称'}</div><div class="detail-value" style="font-weight:700">${item.lawName}</div></div>
+      <div class="detail-row"><div class="detail-label">${t('article')}</div><div class="detail-value">${item.article}</div></div>
+      <div class="detail-row"><div class="detail-label">${isEn?'Published':'发布日期'}</div><div class="detail-value">${item.lastUpdated}</div></div>
+      <div class="detail-row"><div class="detail-label">${t('effective')}</div><div class="detail-value">${item.effectiveDate}</div></div>
+      <div class="detail-row"><div class="detail-label">${t('impact')}</div><div class="detail-value"><span class="detail-tag ${item.importance}">${item.importance.toUpperCase()}</span></div></div>
+      <div class="detail-row"><div class="detail-label">${isEn?'Original Text':'原文'}</div><div class="detail-value" style="font-size:0.7rem;color:var(--text2)">${item.originalText}</div></div>
+      <div class="detail-row"><div class="detail-label">${isEn?'Translation':'中文翻译'}</div><div class="detail-value" style="font-size:0.7rem;color:var(--text2)">${item.chineseTranslation}</div></div>
+      <div class="detail-row"><div class="detail-label">${isEn?'Official Source':'官方来源'}</div><div class="detail-value"><a href="${item.officialUrl}" target="blank">${isEn?'View Original Source →':'查看官方来源 ↗'}</a></div></div>
+    </div>
+    <div class="db-ai">
+      <div class="ai-section-title"><span class="ai-dot"></span>🤖 ${isEn?'AI Analysis':'AI 分析'}</div>
+      ${ai ? `
+      <div class="detail-row"><div class="detail-label">${t('aiSummary')}</div><div class="detail-value" style="font-size:0.7rem;line-height:1.6">${isEn?(ai.summary_en||ai.summary):ai.summary}</div></div>
+      <div class="detail-row"><div class="detail-label">${isEn?'Business Impact':'业务影响'}</div><div class="detail-value" style="font-size:0.7rem;line-height:1.6;color:var(--text2)">${isEn?(ai.summary_en||ai.summary):ai.summary}</div></div>
+      <div class="detail-row"><div class="detail-label">${isEn?'Affected Modules':'受影响模块'}</div><div class="detail-value">${ai.modules.map(m=>`<span class="detail-tag mod">${m}</span>`).join('')}</div></div>
+      <div class="detail-row"><div class="detail-label">${isEn?'Risk Level':'风险等级'}</div><div class="detail-value"><span class="detail-tag ${ai.impact}">${ai.impact.toUpperCase()}</span></div></div>
+      <div class="detail-row"><div class="detail-label">${t('aiRecommendation')}</div><div class="detail-value">${((isEn?(ai.recommendation_en||ai.recommendation):ai.recommendation)||'').split('。').filter(Boolean).map(r=>`<div class="detail-check">${r.trim()}。</div>`).join('')}</div></div>
+      ` : `<div style="font-size:0.72rem;color:var(--text3);padding:20px 0;text-align:center">${isEn?'No AI analysis available':'暂无 AI 分析数据'}</div>`}
+    </div>`;
+}
 
 // ============ RIGHT PANEL ============
 function renderRightPanel() {
@@ -684,6 +747,9 @@ function onNotifClick(country) {
   renderHeroChips();
   const c = globeCountries.find(x => x.name === country);
   if (c) animateCamera(latLonToVec3(c.lat, c.lon, 2.0));
+  // Auto-select first law
+  const countryLaws = filteredData.filter(d=>d.country===country);
+  if(countryLaws.length>0){expandedCard=countryLaws[0].id;renderTimeline();renderDetail(countryLaws[0].id);}
 }
 
 // ============ DRAWER ============
@@ -811,8 +877,16 @@ function onGlobeMove(e){
   }else{hoveredMesh=null;renderer.domElement.style.cursor='grab';tt.classList.remove('show');}
 }
 function onGlobeClick(e){const rect=renderer.domElement.getBoundingClientRect();mouse.x=((e.clientX-rect.left)/rect.width)*2-1;mouse.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects(countryMeshes);if(hits.length>0)selectGlobeCountry(hits[0].object.userData.country);}
-function selectGlobeCountry(country){selectedCountry=country;document.getElementById('filterCountry').value=country;applyFilters();renderHeroChips();const c=globeCountries.find(x=>x.name===country);if(c)animateCamera(latLonToVec3(c.lat,c.lon,2.0));}
-function filterByRegion(region){document.getElementById('filterRegion').value=region;applyFilters();renderHeroChips();const cs=globeCountries.filter(c=>c.region===region);if(cs.length){const aLat=cs.reduce((s,c)=>s+c.lat,0)/cs.length,aLon=cs.reduce((s,c)=>s+c.lon,0)/cs.length;animateCamera(latLonToVec3(aLat,aLon,3.0));}}
+function selectGlobeCountry(country){selectedCountry=country;document.getElementById('filterCountry').value=country;applyFilters();renderHeroChips();const c=globeCountries.find(x=>x.name===country);if(c)animateCamera(latLonToVec3(c.lat,c.lon,2.0));
+  // Auto-select first law for this country
+  const countryLaws = filteredData.filter(d=>d.country===country);
+  if(countryLaws.length>0){expandedCard=countryLaws[0].id;renderTimeline();renderDetail(countryLaws[0].id);}
+  else{expandedCard=null;renderDetail(null);}
+}
+function filterByRegion(region){document.getElementById('filterRegion').value=region;applyFilters();renderHeroChips();const cs=globeCountries.filter(c=>c.region===region);if(cs.length){const aLat=cs.reduce((s,c)=>s+c.lat,0)/cs.length,aLon=cs.reduce((s,c)=>s+c.lon,0)/cs.length;animateCamera(latLonToVec3(aLat,aLon,3.0));}
+  // Auto-select first visible law
+  if(filteredData.length>0){expandedCard=filteredData[0].id;renderTimeline();renderDetail(filteredData[0].id);}
+}
 function animateCamera(targetPos){const start=camera.position.clone(),dur=800,t0=Date.now();autoRotate=false;(function step(){const t=Math.min((Date.now()-t0)/dur,1),e=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;camera.position.lerpVectors(start,targetPos,e);camera.lookAt(0,0,0);if(t<1)requestAnimationFrame(step);else setTimeout(()=>autoRotate=true,4000);})();}
 window.addEventListener('resize',()=>{const c=document.getElementById('globeCanvas'),W=c.clientWidth,H=c.clientHeight;if(!W||!H)return;camera.aspect=W/H;camera.updateProjectionMatrix();renderer.setSize(W,H);});
 

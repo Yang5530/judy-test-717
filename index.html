@@ -3,656 +3,545 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>全球劳动法汇总系统 v2.0</title>
+<title>Global HR AI Platform V3</title>
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <style>
-/* ========== CSS VARIABLES ========== */
-:root {
-  --bg: #f0f2f5; --bg2: #ffffff; --bg3: rgba(255,255,255,0.9);
-  --card: #ffffff; --card-hover: #f8fafc;
-  --border: #e2e8f0; --border-glow: rgba(59,130,246,0.2);
-  --accent: #3b82f6; --accent2: #8b5cf6; --accent3: #06b6d4;
-  --gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  --text: #1e293b; --text2: #64748b; --text3: #94a3b8;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08); --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
-  --globe-bg: #0c1220;
-  --high: #ef4444; --medium: #f59e0b; --low: #22c55e;
-  --radius: 10px; --radius-sm: 6px;
-  --header-h: 48px; --left-w: 230px; --right-w: 310px;
-  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--card:rgba(15,23,42,0.85);--card-hover:rgba(20,30,55,0.95);
+  --border:rgba(56,189,248,0.12);--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --accent:#06b6d4;--accent2:#3b82f6;--accent3:#8b5cf6;
+  --high:#ef4444;--medium:#f59e0b;--low:#22c55e;
+  --radius:10px;--radius-sm:6px;--header-h:48px;--left-w:240px;--right-w:300px;
+  --globe-bg:#0c1220;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;
+  --gradient:linear-gradient(135deg,#06b6d4,#3b82f6,#8b5cf6);
 }
-[data-theme="dark"] {
-  --bg: #0a0e1a; --bg2: #111827; --bg3: rgba(17,24,39,0.95);
-  --card: rgba(15,23,42,0.85); --card-hover: rgba(20,30,55,0.95);
-  --border: rgba(56,189,248,0.1); --border-glow: rgba(56,189,248,0.15);
-  --accent: #06b6d4; --accent2: #3b82f6; --accent3: #8b5cf6;
-  --gradient: linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6);
-  --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
-  --shadow: 0 1px 3px rgba(0,0,0,0.3); --shadow-lg: 0 4px 16px rgba(0,0,0,0.4);
-  --globe-bg: #020810;
+[data-theme="light"]{
+  --bg:#f0f2f5;--bg2:#ffffff;--card:#fff;--card-hover:#f8fafc;
+  --border:#e2e8f0;--text:#1e293b;--text2:#64748b;--text3:#94a3b8;
+  --accent:#3b82f6;--accent2:#8b5cf6;--accent3:#06b6d4;
+  --globe-bg:#e8edf5;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-html,body { height:100%; overflow:hidden; }
-body { font-family:var(--font); background:var(--bg); color:var(--text); transition:background .3s,color .3s; }
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;flex-direction:column}
 
 /* ========== HEADER ========== */
-.header {
-  height: var(--header-h); display:flex; align-items:center; justify-content:space-between;
-  padding:0 16px; background:var(--bg2); border-bottom:1px solid var(--border);
-  position:sticky; top:0; z-index:1000; transition:background .3s;
-}
-.header-logo {
-  display:flex; align-items:center; gap:8px; font-size:0.9rem; font-weight:700;
-  background:var(--gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-}
-.header-actions { display:flex; gap:6px; align-items:center; }
-.hbtn {
-  background:var(--card); border:1px solid var(--border); color:var(--text2);
-  padding:4px 10px; border-radius:var(--radius-sm); cursor:pointer;
-  font-size:0.75rem; transition:all .2s; display:flex; align-items:center; gap:4px;
-}
-.hbtn:hover { border-color:var(--accent); color:var(--accent); background:var(--card-hover); }
-.hbtn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
-.theme-toggle {
-  width:32px; height:32px; border-radius:50%; border:1px solid var(--border);
-  background:var(--card); cursor:pointer; display:flex; align-items:center; justify-content:center;
-  font-size:1rem; transition:all .3s;
-}
-.theme-toggle:hover { border-color:var(--accent); transform:rotate(20deg); }
+.header{height:var(--header-h);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100;flex-shrink:0}
+.header-logo{font-size:0.88rem;font-weight:700;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-actions{display:flex;align-items:center;gap:4px}
+.hbtn{background:none;border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:var(--radius-sm);cursor:pointer;font-size:0.72rem;display:inline-flex;align-items:center;gap:4px;transition:all .2s}
+.hbtn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.theme-toggle{background:none;border:1px solid var(--border);color:var(--text);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.theme-toggle:hover{background:var(--accent);color:#fff}
 
-/* ========== THREE-COLUMN ========== */
-.layout { display:flex; height:calc(100vh - var(--header-h)); }
+/* ========== DROPDOWN ========== */
+.dd-wrap{position:relative}
+.dd-menu{position:absolute;top:calc(100% + 4px);right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);min-width:140px;display:none;z-index:200;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.dd-menu.open{display:block}
+.dd-menu div{padding:8px 12px;font-size:0.75rem;cursor:pointer;color:var(--text);transition:background .15s}
+.dd-menu div:hover{background:var(--accent);color:#fff}
+.dd-menu .sep{height:1px;background:var(--border);padding:0;margin:2px 0}
 
-/* LEFT */
-.left { width:var(--left-w); min-width:var(--left-w); background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow-y:auto; transition:background .3s; scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
-.left::-webkit-scrollbar { width:3px; }
-.left::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
-.sec { padding:10px 12px; border-bottom:1px solid var(--border); }
-.sec:last-child { border-bottom:none; }
-.sec-label { font-size:0.62rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text3); margin-bottom:6px; font-weight:600; }
-.sinput {
-  width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:var(--radius-sm);
-  font-size:0.8rem; background:var(--card); color:var(--text); transition:all .2s;
-}
-.sinput:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 2px rgba(59,130,246,0.15); }
-.sinput::placeholder { color:var(--text3); }
-.sselect {
-  width:100%; padding:6px 8px; border:1px solid var(--border); border-radius:var(--radius-sm);
-  font-size:0.78rem; background:var(--card); color:var(--text); cursor:pointer; transition:all .2s;
-}
-.sselect:focus { outline:none; border-color:var(--accent); }
-.sselect option { background:var(--bg2); color:var(--text); }
-.tree-item { display:flex; align-items:center; padding:6px 8px; cursor:pointer; border-radius:var(--radius-sm); font-weight:600; font-size:0.8rem; color:var(--text); transition:all .2s; }
-.tree-item:hover { background:var(--border); }
-.tree-arrow { width:14px; font-size:0.55rem; transition:transform .2s; color:var(--text3); margin-right:4px; }
-.tree-item.active .tree-arrow { transform:rotate(90deg); }
-.tree-sub { display:none; list-style:none; padding:0 0 4px 20px; margin:0; }
-.tree-item.active + .tree-sub { display:block; }
-.tree-sub li { padding:4px 8px; cursor:pointer; border-radius:var(--radius-sm); font-size:0.75rem; color:var(--text2); transition:all .2s; }
-.tree-sub li:hover { background:var(--border); color:var(--text); }
-.tree-sub li.active { background:var(--accent); color:#fff; }
-.tree-sub.nest { padding-left:14px; display:none; }
-.tree-sub.nest li { font-size:0.72rem; padding:3px 6px; }
-.tree-sub li.has-sub.active + .tree-sub.nest { display:block; }
-.result-num { font-size:0.7rem; color:var(--text3); text-align:center; padding:4px 0; }
+/* ========== NOTIFICATION PANEL ========== */
+.notif-panel{position:fixed;top:var(--header-h);right:0;width:360px;height:calc(100vh - var(--header-h));background:var(--bg2);border-left:1px solid var(--border);z-index:150;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column}
+.notif-panel.open{transform:translateX(0)}
+.notif-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.notif-header h3{font-size:0.88rem;font-weight:700}
+.notif-body{flex:1;overflow-y:auto;padding:8px 0}
+.notif-group-label{padding:6px 16px;font-size:0.68rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px}
+.notif-item{padding:10px 16px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
+.notif-item:hover{background:var(--card-hover)}
+.notif-item .ni-flag{font-size:1.1rem;flex-shrink:0;margin-top:2px}
+.notif-item .ni-body{flex:1;min-width:0}
+.notif-item .ni-title{font-size:0.78rem;font-weight:600;margin-bottom:2px}
+.notif-item .ni-sub{font-size:0.68rem;color:var(--text2)}
+.notif-item .ni-date{font-size:0.62rem;color:var(--text3);margin-top:2px}
+.notif-item .ni-badge{background:var(--high);color:#fff;font-size:0.55rem;padding:1px 5px;border-radius:8px;font-weight:700;flex-shrink:0;margin-top:2px}
 
-/* CENTER */
-.center { flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
-.stats-row { display:flex; gap:2px; padding:4px 8px; background:var(--bg); border-bottom:1px solid var(--border); flex-shrink:0; transition:background .3s; }
-.stat-chip { flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:5px 6px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.72rem; transition:all .2s; }
-.stat-chip:hover { border-color:var(--accent); }
-.stat-num { font-size:1rem; font-weight:800; background:var(--gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.stat-lbl { color:var(--text3); }
-.globe-wrap { flex:1; display:flex; align-items:center; justify-content:center; position:relative; min-height:0; padding:6px; }
-.globe-box { width:100%; max-width:540px; position:relative; }
-#globeCanvas { width:100%; height:440px; border-radius:14px; cursor:grab; background:var(--globe-bg); box-shadow:0 0 30px rgba(6,182,212,0.06), inset 0 0 40px rgba(0,0,0,0.6); border:1px solid var(--border); transition:border-color .3s; }
-#globeCanvas:hover { border-color:var(--accent); }
-#globeCanvas:active { cursor:grabbing; }
-.globe-tip { position:fixed; background:var(--bg3); color:var(--text); padding:8px 14px; border-radius:8px; font-size:0.8rem; pointer-events:none; z-index:9999; opacity:0; transition:opacity .15s; white-space:nowrap; border:1px solid var(--border); box-shadow:var(--shadow-lg); backdrop-filter:blur(12px); }
-.globe-tip.show { opacity:1; }
-.globe-tip .tf { font-size:1.1rem; margin-right:5px; }
-.globe-tip .tn { font-weight:700; }
-.globe-tip .tr { color:var(--accent); font-size:0.7rem; margin-left:5px; }
-.globe-tip .tc { font-size:0.7rem; color:var(--text2); margin-left:6px; }
-.globe-legend { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; justify-content:center; }
-.gleg { display:flex; align-items:center; gap:3px; font-size:0.65rem; color:var(--text2); cursor:pointer; padding:2px 6px; border-radius:8px; transition:all .2s; }
-.gleg:hover { background:var(--border); color:var(--accent); }
-.gdot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-.ginfo { display:flex; justify-content:space-between; margin-top:3px; font-size:0.65rem; color:var(--text3); }
-.chart-area { flex-shrink:0; padding:6px 10px; border-top:1px solid var(--border); background:var(--bg); transition:background .3s; }
-.chart-area h3 { font-size:0.7rem; color:var(--text3); margin-bottom:4px; text-transform:uppercase; letter-spacing:.04em; }
-.bchart { display:flex; align-items:flex-end; gap:8px; height:70px; }
-.bitem { flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; }
-.bar { width:100%; max-width:42px; border-radius:3px 3px 0 0; background:var(--gradient); box-shadow:0 0 6px rgba(59,130,246,0.2); transition:all .3s; position:relative; }
-.bar:hover { filter:brightness(1.2); transform:scaleY(1.05); }
-.bval { position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:0.65rem; font-weight:700; color:var(--accent); }
-.blbl { font-size:0.6rem; color:var(--text3); margin-top:3px; }
+/* ========== MAIN LAYOUT ========== */
+.main{flex:1;display:grid;grid-template-columns:var(--left-w) 1fr var(--right-w);overflow:hidden}
 
-/* RIGHT */
-.right { width:var(--right-w); min-width:var(--right-w); background:var(--bg2); border-left:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; transition:background .3s; }
-.kpi-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; padding:8px 10px; border-bottom:1px solid var(--border); }
-.kpi { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; text-align:center; transition:all .25s; }
-.kpi:hover { border-color:var(--accent); box-shadow:0 0 10px var(--border-glow); transform:translateY(-1px); }
-.kpi-ic { font-size:1rem; }
-.kpi-n { font-size:1.2rem; font-weight:800; background:var(--gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.kpi-l { font-size:0.6rem; color:var(--text3); }
+/* ========== LEFT COLUMN ========== */
+.left{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.left-search{padding:10px 12px;border-bottom:1px solid var(--border)}
+.sinput{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--card);color:var(--text);font-size:0.75rem;outline:none}
+.sinput:focus{border-color:var(--accent)}
+.left-filters{padding:6px 12px;border-bottom:1px solid var(--border);display:flex;gap:4px;flex-wrap:wrap}
+.fsel{padding:4px 6px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--card);color:var(--text);font-size:0.68rem;cursor:pointer}
+.left-tree{flex:1;overflow-y:auto;padding:6px 0}
+.tree-item{cursor:pointer}
+.tree-label{display:flex;align-items:center;gap:6px;padding:5px 12px;font-size:0.73rem;color:var(--text2);cursor:pointer;transition:all .15s}
+.tree-label:hover{color:var(--accent);background:var(--card-hover)}
+.tree-label.active{color:var(--accent);background:var(--card)}
+.tree-arrow{font-size:0.55rem;transition:transform .2s;width:12px;text-align:center}
+.tree-item.open>.tree-label>.tree-arrow{transform:rotate(90deg)}
+.tree-sub{display:none;padding-left:12px}
+.tree-item.open>.tree-sub{display:block}
+.tree-sub li{list-style:none;padding:4px 12px;font-size:0.68rem;color:var(--text3);cursor:pointer;border-radius:var(--radius-sm);margin:1px 8px;transition:all .15s}
+.tree-sub li:hover{color:var(--text);background:var(--card-hover)}
+.tree-sub li.active{color:var(--accent);background:var(--card);font-weight:600}
+.tree-sub-item{list-style:none;padding:4px 12px 4px 24px;font-size:0.65rem;color:var(--text3);cursor:pointer;border-radius:var(--radius-sm);margin:1px 8px;transition:all .15s}
+.tree-sub-item:hover{color:var(--text);background:var(--card-hover)}
+.tree-sub-item.active{color:var(--accent);background:var(--card);font-weight:600}
+.left-globe{border-top:1px solid var(--border);padding:8px 12px;position:relative;min-height:200px}
+.globe-info{position:absolute;top:8px;left:12px;font-size:0.6rem;color:var(--text3)}
+#globeCanvas{width:100%;height:180px;cursor:grab;border-radius:var(--radius-sm)}
+.globe-legend{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.gleg{font-size:0.58rem;color:var(--text3);cursor:pointer;display:flex;align-items:center;gap:3px;padding:2px 5px;border-radius:8px;transition:all .15s}
+.gleg:hover{color:var(--accent);background:var(--card)}
+.gdot{width:6px;height:6px;border-radius:50%}
+#globeTip{position:fixed;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;font-size:0.7rem;pointer-events:none;opacity:0;transition:opacity .15s;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.4)}
+#globeTip.show{opacity:1}
 
-/* AI Module */
-.ai-section { border-bottom:1px solid var(--border); }
-.ai-header { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; cursor:pointer; transition:background .2s; }
-.ai-header:hover { background:var(--card-hover); }
-.ai-header h4 { font-size:0.72rem; color:var(--text); display:flex; align-items:center; gap:4px; }
-.ai-header h4 .ai-dot { width:6px; height:6px; border-radius:50%; background:#22c55e; animation:blink 1.5s infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-.ai-badge { font-size:0.6rem; padding:1px 6px; border-radius:8px; background:rgba(34,197,94,0.15); color:#22c55e; font-weight:600; }
-.ai-list { max-height:200px; overflow-y:auto; padding:0 10px 8px; scrollbar-width:thin; }
-.ai-item { padding:6px 8px; border-radius:var(--radius-sm); border:1px solid var(--border); margin-bottom:4px; cursor:pointer; transition:all .2s; }
-.ai-item:hover { border-color:var(--accent); background:var(--card-hover); }
-.ai-item-top { display:flex; align-items:center; gap:4px; margin-bottom:3px; }
-.ai-item-flag { font-size:0.9rem; }
-.ai-item-country { font-size:0.7rem; font-weight:600; color:var(--text); }
-.ai-item-date { font-size:0.6rem; color:var(--text3); margin-left:auto; }
-.ai-item-title { font-size:0.72rem; color:var(--text); font-weight:500; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.ai-item-summary { font-size:0.65rem; color:var(--text2); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-.ai-item-bottom { display:flex; gap:4px; margin-top:4px; flex-wrap:wrap; }
-.ai-tag { font-size:0.58rem; padding:1px 5px; border-radius:6px; font-weight:600; }
-.ai-tag.high { background:rgba(239,68,68,0.15); color:var(--high); }
-.ai-tag.medium { background:rgba(245,158,11,0.15); color:var(--medium); }
-.ai-tag.low { background:rgba(34,197,94,0.15); color:var(--low); }
-.ai-tag.mod { background:rgba(59,130,246,0.1); color:var(--accent); }
-.ai-viewall { display:block; text-align:center; padding:6px; font-size:0.7rem; color:var(--accent); cursor:pointer; border-top:1px solid var(--border); transition:all .2s; }
-.ai-viewall:hover { background:var(--card-hover); }
+/* ========== CENTER COLUMN ========== */
+.center{display:flex;flex-direction:column;overflow:hidden}
+.center-hero{flex-sh1:0;padding:16px 20px 12px}
+.hero-title{font-size:1.05rem;font-weight:800;margin-bottom:2px;display:flex;align-items:center;gap:8px}
+.hero-title .ai-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(6,182,212,0.5)}50%{opacity:0.8;box-shadow:0 0 0 6px rgba(6,182,212,0)}}
+.hero-sub{font-size:0.72rem;color:var(--text2);margin-bottom:10px}
+.hero-chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{padding:4px 10px;border-radius:12px;font-size:0.65rem;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);transition:all .2s}
+.chip:hover,.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.center-timeline{flex:1;overflow-y:auto;padding:0 20px 16px}
+.tl-group{margin-bottom:16px}
+.tl-year{font-size:0.72rem;font-weight:800;color:var(--accent);padding:4px 0;display:flex;align-items:center;gap:8px}
+.tl-year::after{content:'';flex:1;height:1px;background:var(--border)}
+.tl-month{font-size:0.62rem;font-weight:700;color:var(--text3);text-transform:uppercase;padding:2px 0 4px 8px;letter-spacing:1px}
+.tl-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.tl-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.tl-card.high::before{background:var(--high)}
+.tl-card.medium::before{background:var(--medium)}
+.tl-card.low::before{background:var(--low)}
+.tl-card:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.tl-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.tl-flag{font-size:0.95rem}
+.tl-country{font-size:0.72rem;font-weight:700}
+.tl-date{font-size:0.6rem;color:var(--text3);margin-left:auto}
+.tl-law{font-size:0.78rem;font-weight:600;margin-bottom:3px}
+.tl-article{font-size:0.62rem;color:var(--text3);margin-bottom:4px}
+.tl-summary{font-size:0.68rem;color:var(--text2);line-height:1.4;margin-bottom:6px}
+.tl-tags{display:flex;gap:4px;flex-wrap:wrap}
+.tl-tag{font-size:0.58rem;padding:2px 6px;border-radius:8px;font-weight:600}
+.tl-tag.high{background:rgba(239,68,68,0.15);color:var(--high)}
+.tl-tag.medium{background:rgba(245,158,11,0.15);color:var(--medium)}
+.tl-tag.low{background:rgba(34,197,94,0.15);color:var(--low)}
+.tl-tag.mod{background:rgba(6,182,212,0.1);color:var(--accent);border:1px solid rgba(6,182,212,0.2)}
+.tl-detail{display:none;padding:10px 12px;background:var(--bg2);border-radius:var(--radius-sm);margin-top:6px;font-size:0.68rem;border:1px solid var(--border)}
+.tl-card.exp .tl-detail{display:block}
+.tl-detail h4{font-size:0.72rem;font-weight:700;margin-bottom:6px}
+.tl-detail p{color:var(--text2);line-height:1.5;margin-bottom:6px}
+.tl-detail .rec{border-left:3px solid var(--accent);padding-left:8px;color:var(--text2);font-style:italic}
 
-/* Compare */
-.cmp-section { padding:8px 10px; border-bottom:1px solid var(--border); }
-.cmp-section h4 { font-size:0.68rem; color:var(--text3); text-transform:uppercase; letter-spacing:.04em; margin-bottom:5px; }
-.cmp-row { display:flex; gap:4px; align-items:center; }
-.cmp-sel { flex:1; padding:4px 6px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--card); color:var(--text); font-size:0.75rem; }
-.cmp-sel option { background:var(--bg2); }
-.cmp-vs { color:var(--accent); font-weight:700; font-size:0.75rem; }
-.cmp-box { display:none; gap:6px; margin-top:6px; }
-.cmp-box.active { display:grid; grid-template-columns:1fr 1fr; }
-.cmp-col { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; }
-.cmp-col h3 { font-size:0.8rem; margin-bottom:6px; padding-bottom:4px; border-bottom:2px solid var(--accent); }
+/* ========== RIGHT COLUMN ========== */
+.right{border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:12px}
+.right h4{font-size:0.75rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.right h4 .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.rcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px;margin-bottom:10px}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.kpi{text-align:center;padding:8px 4px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.kpi-v{font-size:1.1rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.kpi-l{font-size:0.6rem;color:var(--text2);margin-top:2px}
+.progress{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:4px 0}
+.progress-bar{height:100%;border-radius:3px;transition:width .5s}
+.risk-label{display:flex;justify-content:space-between;font-size:0.65rem;color:var(--text2)}
+.ai-insight{padding:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;font-size:0.68rem;color:var(--text2);line-height:1.4;border-left:3px solid var(--accent)}
+.upcoming-item{padding:6px 0;border-bottom:1px solid var(--border);font-size:0.68rem}
+.upcoming-item:last-child{border-bottom:none}
+.upcoming-date{font-size:0.6rem;color:var(--text3)}
+.ai-rec{padding:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;font-size:0.68rem;color:var(--text2);border-left:3px solid var(--accent3)}
 
-/* Law List */
-.lawlist { flex:1; overflow-y:auto; }
-.ll-header { padding:6px 10px; font-size:0.68rem; color:var(--text3); text-transform:uppercase; letter-spacing:.04em; position:sticky; top:0; background:var(--bg2); z-index:1; border-bottom:1px solid var(--border); }
-.law-row { padding:6px 10px; border-bottom:1px solid var(--border); cursor:pointer; transition:all .2s; display:flex; align-items:flex-start; gap:6px; }
-.law-row:hover { background:var(--card-hover); }
-.law-row.exp { background:var(--border); }
-.law-flag { font-size:1rem; flex-shrink:0; margin-top:1px; }
-.law-info { flex:1; min-width:0; }
-.law-ctry { font-size:0.68rem; color:var(--text3); }
-.law-title { font-size:0.76rem; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.law-art { font-size:0.65rem; color:var(--text2); }
-.law-cat { display:inline-block; padding:1px 5px; border-radius:6px; font-size:0.58rem; font-weight:600; color:#fff; flex-shrink:0; margin-top:2px; }
-.cat-劳动合同 { background:#3b82f6; }
-.cat-入职离职 { background:#f59e0b; }
-.cat-社保规定 { background:#14b8a6; }
-.cat-工作时间 { background:#a78bfa; }
-.cat-休假 { background:#22c55e; }
-.cat-工资 { background:#ef4444; }
-.cat-离职结算 { background:#ec4899; }
-.law-detail { display:none; padding:6px 10px 8px 30px; background:var(--bg); border-bottom:1px solid var(--border); font-size:0.72rem; line-height:1.5; color:var(--text2); }
-.law-row.exp + .law-detail { display:block; }
-.law-detail .dl { font-size:0.62rem; color:var(--text3); text-transform:uppercase; font-weight:600; margin-bottom:2px; }
-.law-detail .dt { padding:4px 6px; background:var(--card); border-radius:var(--radius-sm); margin-bottom:4px; border:1px solid var(--border); }
-.law-detail a { color:var(--accent); text-decoration:none; }
+/* ========== DRAWER ========== */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
+.drawer-overlay.open{opacity:1;pointer-events:all}
+.drawer{position:fixed;top:0;right:0;width:420px;max-width:90vw;height:100vh;background:var(--bg2);border-left:1px solid var(--border);z-index:210;transform:translateX(100%);transition:transform .3s;overflow-y:auto;padding:20px}
+.drawer.open{transform:translateX(0)}
+.drawer h2{font-size:0.95rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.drawer .field{margin-bottom:10px}
+.drawer .field-label{font-size:0.62rem;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:3px;letter-spacing:0.5px}
+.drawer .field-value{font-size:0.75rem;color:var(--text);line-height:1.5}
+.drawer-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text2);font-size:1rem;cursor:pointer}
 
-/* Drawer (law detail) */
-.drawer-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:2000; }
-.drawer-overlay.open { display:block; }
-.drawer { position:fixed; top:0; right:-420px; width:400px; height:100vh; background:var(--bg2); border-left:1px solid var(--border); z-index:2001; transition:right .3s; overflow-y:auto; padding:16px; }
-.drawer.open { right:0; }
-.drawer-close { position:absolute; top:12px; right:12px; background:none; border:none; color:var(--text2); font-size:1.2rem; cursor:pointer; }
-.drawer h2 { font-size:0.95rem; margin-bottom:12px; padding-right:30px; }
-.drawer .field { margin-bottom:10px; }
-.drawer .field-label { font-size:0.65rem; color:var(--text3); text-transform:uppercase; font-weight:600; margin-bottom:2px; }
-.drawer .field-value { font-size:0.82rem; color:var(--text); padding:6px 8px; background:var(--card); border-radius:var(--radius-sm); border:1px solid var(--border); }
-.drawer .impact-bar { display:flex; gap:4px; margin-top:4px; }
-.drawer .impact-tag { font-size:0.65rem; padding:2px 6px; border-radius:6px; font-weight:600; }
+/* ========== SETTINGS ========== */
+.settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s;display:flex;align-items:center;justify-content:center}
+.settings-overlay.open{opacity:1;pointer-events:all}
+.settings-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;width:400px;max-width:90vw}
+.settings-box h2{font-size:0.88rem;font-weight:700;margin-bottom:12px}
+.settings-box label{display:block;font-size:0.7rem;color:var(--text2);margin-bottom:4px}
+.settings-box input,.settings-box select{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--card);color:var(--text);font-size:0.75rem;margin-bottom:10px}
+.settings-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:12px}
 
-/* Settings */
-.settings-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:2000; justify-content:center; align-items:center; }
-.settings-overlay.open { display:flex; }
-.settings-panel { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:20px; width:90%; max-width:420px; box-shadow:var(--shadow-lg); }
-.settings-panel h2 { font-size:0.95rem; margin-bottom:14px; color:var(--accent); }
-.sfield { margin-bottom:10px; }
-.sfield label { display:block; font-size:0.75rem; font-weight:600; margin-bottom:3px; color:var(--text2); }
-.sfield input, .sfield textarea { width:100%; padding:7px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.82rem; background:var(--card); color:var(--text); }
-.sfield textarea { height:70px; resize:vertical; }
+/* ========== TOAST ========== */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:#fff;padding:8px 18px;border-radius:20px;font-size:0.75rem;font-weight:600;opacity:0;transition:all .3s;z-index:999;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* Toast */
-.toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--card); color:var(--text); padding:8px 18px; border-radius:var(--radius-sm); border:1px solid var(--border); box-shadow:var(--shadow-lg); z-index:3000; transition:transform .3s; font-size:0.82rem; backdrop-filter:blur(12px); }
-.toast.show { transform:translateX(-50%) translateY(0); }
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
 
-/* Export */
-.export-dd { position:relative; display:inline-block; }
-.export-menu { display:none; position:absolute; right:0; top:100%; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); box-shadow:var(--shadow-lg); z-index:100; min-width:130px; backdrop-filter:blur(12px); }
-.export-menu.open { display:block; }
-.export-menu div { padding:7px 12px; cursor:pointer; font-size:0.78rem; color:var(--text2); transition:all .2s; }
-.export-menu div:hover { background:var(--border); color:var(--text); }
-
-/* Mobile */
-.mob-toggle { display:none; position:fixed; bottom:16px; right:16px; width:44px; height:44px; border-radius:50%; background:var(--gradient); color:#fff; border:none; font-size:1.1rem; cursor:pointer; box-shadow:0 4px 16px rgba(59,130,246,0.4); z-index:900; }
-@media(max-width:768px) {
-  .left { position:fixed; left:-260px; top:var(--header-h); height:calc(100vh - var(--header-h)); z-index:800; width:240px; transition:left .3s; }
-  .left.open { left:0; box-shadow:var(--shadow-lg); }
-  .right { display:none; }
-  .mob-toggle { display:flex; align-items:center; justify-content:center; }
-  #globeCanvas { height:280px; }
-}
-@media print { .header,.left,.right,.mob-toggle,.stats-row { display:none!important; } }
+/* ========== BILINGUAL ========== */
+.bi-toggle{display:flex;gap:2px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:2px;margin:0 12px 8px}
+.bi-btn{padding:3px 8px;border-radius:4px;font-size:0.62rem;cursor:pointer;color:var(--text2);transition:all .15s;border:none;background:none}
+.bi-btn.active{background:var(--accent);color:#fff}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header class="header">
-  <div class="header-logo">🌐 全球劳动法汇总系统 v2.0</div>
+  <div class="header-logo" data-i18n="title">🌐 全球劳动法汇总系统 v3.0</div>
   <div class="header-actions">
-    <button class="hbtn" id="langBtn" onclick="cycleLang()">中文</button>
-    <button class="hbtn" id="cmpBtn" onclick="toggleCompare()">对比</button>
-    <div class="export-dd">
-      <button class="hbtn" onclick="toggleExport()">导出 ▾</button>
-      <div class="export-menu" id="exportMenu">
-        <div onclick="exportJSON()">复制 JSON</div>
-        <div onclick="exportPrint()">打印 / PDF</div>
+    <div class="dd-wrap">
+      <button class="hbtn" onclick="toggleDD('langDD')" id="langBtn">🌐 中文</button>
+      <div class="dd-menu" id="langDD">
+        <div onclick="switchLang('zh')">🇨🇳 中文</div>
+        <div onclick="switchLang('en')">🇺🇸 English</div>
+        <div onclick="switchLang('es')">🇪🇸 Español</div>
       </div>
     </div>
-    <button class="hbtn" onclick="openSettings()">⚙️</button>
-    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="切换主题">🌙</button>
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+    <button class="hbtn" onclick="toggleNotifPanel()" style="position:relative">🔔<span id="notifBadge" style="position:absolute;top:-5px;right:-5px;background:var(--high);color:#fff;border-radius:50%;width:15px;height:15px;font-size:0.55rem;display:flex;align-items:center;justify-content:center;font-weight:700">3</span></button>
+    <div class="dd-wrap">
+      <button class="hbtn" onclick="toggleDD('profileDD')" style="gap:6px"><span style="width:24px;height:24px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:#fff">JL</span> Judy</button>
+      <div class="dd-menu" id="profileDD">
+        <div onclick="showToast(t('profile'))">👤 <span data-i18n="profile">个人资料</span></div>
+        <div onclick="openSettings()">⚙️ <span data-i18n="settings">设置</span></div>
+        <div class="sep"></div>
+        <div onclick="showToast('Logged out')">🚪 <span data-i18n="logout">退出登录</span></div>
+      </div>
+    </div>
   </div>
 </header>
 
-<!-- LAYOUT -->
-<div class="layout">
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-header">
+    <h3>🔔 <span data-i18n="notifications">通知中心</span></h3>
+    <button class="hbtn" onclick="toggleNotifPanel()" data-i18n="close">关闭</button>
+  </div>
+  <div class="notif-body" id="notifBody"></div>
+</div>
 
+<!-- MAIN 3-COL LAYOUT -->
+<div class="main">
   <!-- LEFT -->
-  <aside class="left" id="sidebar">
-    <div class="sec">
-      <div class="sec-label">搜索</div>
-      <input class="sinput" id="searchInput" placeholder="搜索法规..." oninput="applyFilters()">
+  <div class="left">
+    <div class="left-search">
+      <input class="sinput" id="searchInput" data-i18n-ph="searchPlaceholder" placeholder="搜索法规..." oninput="applyFilters()">
     </div>
-    <div class="sec">
-      <div class="sec-label">地区</div>
-      <select class="sselect" id="filterRegion" onchange="applyFilters()">
-        <option value="">全部</option>
-        <option value="Asia">Asia</option><option value="Europe">Europe</option>
-        <option value="Americas">Americas</option><option value="Africa">Africa</option>
-        <option value="Oceania">Oceania</option>
+    <div class="left-filters">
+      <select class="fsel" id="filterRegion" onchange="applyFilters()">
+        <option value="" data-i18n="all">全部</option>
+        <option value="Asia">Asia</option><option value="Europe">Europe</option><option value="Americas">Americas</option>
+        <option value="Africa">Africa</option><option value="Oceania">Oceania</option>
+      </select>
+      <select class="fsel" id="filterCountry" onchange="applyFilters()"><option value="" data-i18n="all">全部</option></select>
+      <select class="fsel" id="sortBy" onchange="applyFilters()">
+        <option value="date" data-i18n="sortDate">按更新日期</option>
+        <option value="country" data-i18n="sortCountry">按国家</option>
       </select>
     </div>
-    <div class="sec">
-      <div class="sec-label">国家</div>
-      <select class="sselect" id="filterCountry" onchange="applyFilters()"><option value="">全部</option></select>
-    </div>
-    <div class="sec">
-      <div class="sec-label">类别</div>
-      <div id="treeMenu">
-        <div class="tree-item" onclick="toggleTreeItem(this)"><span class="tree-arrow">▶</span>按照业务节点</div>
-        <ul class="tree-sub">
-          <li onclick="selectTreeItem(this,'','招聘管理')">招聘管理</li>
-          <li onclick="selectTreeItem(this,'','员工关系')">员工关系</li>
-          <li class="has-sub" onclick="toggleSubTree(this)">薪酬管理</li>
-          <ul class="tree-sub nest">
-            <li class="active" onclick="selectTreeItem(this,'','薪酬管理-全部')">全部</li>
-            <li class="has-sub" onclick="toggleSubTree(this)">法定缴费类</li>
-            <ul class="tree-sub nest"><li onclick="selectTreeItem(this,'社保规定','')">社保规定</li></ul>
-            <li class="has-sub" onclick="toggleSubTree(this)">休假类</li>
-            <ul class="tree-sub nest">
-              <li onclick="selectTreeItem(this,'休假','')">全部</li>
-              <li onclick="selectTreeItem(this,'休假','年假')">年假</li>
-              <li onclick="selectTreeItem(this,'休假','病假')">病假</li>
-              <li onclick="selectTreeItem(this,'休假','产假')">产假</li>
-              <li onclick="selectTreeItem(this,'休假','赔偿金')">赔偿金</li>
-              <li onclick="selectTreeItem(this,'休假','育儿假')">育儿假</li>
-              <li onclick="selectTreeItem(this,'休假','丧假')">丧假</li>
-              <li onclick="selectTreeItem(this,'休假','婚假')">婚假</li>
-              <li onclick="selectTreeItem(this,'休假','其他假期')">其他假期</li>
-            </ul>
-            <li class="has-sub" onclick="toggleSubTree(this)">强制支付 / 法定津贴类</li>
-            <ul class="tree-sub nest"><li onclick="selectTreeItem(this,'强制支付','')">强制支付</li></ul>
-            <li class="has-sub" onclick="toggleSubTree(this)">工时与加班</li>
-            <ul class="tree-sub nest"><li onclick="selectTreeItem(this,'工作时间','')">工作时间</li></ul>
-            <li class="has-sub" onclick="toggleSubTree(this)">离职与遣散</li>
-            <ul class="tree-sub nest">
-              <li onclick="selectTreeItem(this,'入职离职','')">入职离职</li>
-              <li onclick="selectTreeItem(this,'离职结算','')">离职结算</li>
-            </ul>
-            <li class="has-sub" onclick="toggleSubTree(this)">个税</li>
-            <ul class="tree-sub nest"><li onclick="selectTreeItem(this,'个税','')">个税</li></ul>
-          </ul>
-          <li onclick="selectTreeItem(this,'','培训发展')">培训发展</li>
-        </ul>
-      </div>
-    </div>
-    <div class="sec">
-      <div class="sec-label">排序</div>
-      <select class="sselect" id="sortBy" onchange="applyFilters()">
-        <option value="country">按国家</option><option value="date">按更新日期</option>
-      </select>
-    </div>
-    <div class="sec"><div class="result-num" id="resultCount">显示 0 条结果</div></div>
-  </aside>
-
-  <!-- CENTER -->
-  <div class="center">
-    <div class="stats-row">
-      <div class="stat-chip"><span class="stat-num" id="sTotal">0</span><span class="stat-lbl">法规</span></div>
-      <div class="stat-chip"><span class="stat-num" id="sCountries">0</span><span class="stat-lbl">国家</span></div>
-      <div class="stat-chip"><span class="stat-num" id="sCats">7</span><span class="stat-lbl">类别</span></div>
-      <div class="stat-chip"><span class="stat-num" id="sUpdated">-</span><span class="stat-lbl">更新</span></div>
-    </div>
-    <div class="globe-wrap">
-      <div class="globe-box">
-        <canvas id="globeCanvas"></canvas>
-        <div class="globe-tip" id="globeTip"><span class="tf" id="gtFlag"></span><span class="tn" id="gtName"></span><span class="tr" id="gtRegion"></span><span class="tc" id="gtCount"></span></div>
-        <div class="globe-legend" id="globeLegend"></div>
-        <div class="ginfo"><span>🖱️ 拖拽旋转 · 滚轮缩放 · 点击国家</span><span id="globeStatus"></span></div>
-      </div>
-    </div>
-    <div class="chart-area">
-      <h3>各地区法规数量</h3>
-      <div class="bchart" id="barChart"></div>
+    <div class="left-tree" id="treeMenu"></div>
+    <div class="left-globe">
+      <div class="globe-info" data-i18n="globeInfo">🖱️ 拖拽旋转 · 滚轮缩放 · 点击国家</div>
+      <canvas id="globeCanvas"></canvas>
+      <div class="globe-legend" id="globeLegend"></div>
     </div>
   </div>
 
+  <!-- CENTER -->
+  <div class="center">
+    <div class="center-hero">
+      <div class="hero-title"><span class="ai-dot"></span><span data-i18n="heroTitle">AI Employment Law Monitor</span></div>
+      <div class="hero-sub" data-i18n="heroSub">AI automatically monitors employment law updates across supported countries</div>
+      <div class="hero-chips" id="heroChips"></div>
+    </div>
+    <div class="center-timeline" id="timeline"></div>
+  </div>
+
   <!-- RIGHT -->
-  <aside class="right">
+  <div class="right">
+    <h4><span class="dot"></span><span data-i18n="kpiTitle">关键指标</span></h4>
     <div class="kpi-grid">
-      <div class="kpi"><div class="kpi-ic">📋</div><div class="kpi-n" id="kTotal">0</div><div class="kpi-l">法规总数</div></div>
-      <div class="kpi"><div class="kpi-ic">🌍</div><div class="kpi-n" id="kCountries">0</div><div class="kpi-l">覆盖国家</div></div>
-      <div class="kpi"><div class="kpi-ic">📂</div><div class="kpi-n" id="kCats">7</div><div class="kpi-l">法规类别</div></div>
-      <div class="kpi"><div class="kpi-ic">🕐</div><div class="kpi-n" id="kUpdated">-</div><div class="kpi-l">最后更新</div></div>
+      <div class="kpi"><div class="kpi-v" id="kTotal">0</div><div class="kpi-l" data-i18n="法规总数">法规总数</div></div>
+      <div class="kpi"><div class="kpi-v" id="kCountries">0</div><div class="kpi-l" data-i18n="覆盖国家">覆盖国家</div></div>
+      <div class="kpi"><div class="kpi-v" id="kCats">7</div><div class="kpi-l" data-i18n="法规类别">法规类别</div></div>
+      <div class="kpi"><div class="kpi-v" id="kUpdated">-</div><div class="kpi-l" data-i18n="最后更新">最后更新</div></div>
     </div>
 
-    <!-- AI Module -->
-    <div class="ai-section">
-      <div class="ai-header" onclick="toggleAI()">
-        <h4><span class="ai-dot"></span>AI Regulatory Intelligence</h4>
-        <span class="ai-badge">LIVE</span>
-      </div>
-      <div class="ai-list" id="aiList"></div>
-      <div class="ai-viewall" onclick="openAIDrawer()">查看全部 AI 监控 →</div>
+    <h4><span class="dot"></span><span data-i18n="complianceRisk">合规风险评估</span></h4>
+    <div class="rcard">
+      <div class="risk-label"><span data-i18n="overallScore">总体风险分数</span><span id="riskScore">78/100</span></div>
+      <div class="progress"><div class="progress-bar" id="riskBar" style="width:78%;background:var(--gradient)"></div></div>
+      <div style="font-size:0.62rem;color:var(--text3);margin-top:4px" data-i18n="riskNote">基于最近法规变化评估</div>
     </div>
 
-    <!-- Compare -->
-    <div class="cmp-section" id="cmpSection" style="display:none">
-      <h4>对比国家</h4>
-      <div class="cmp-row">
-        <select class="cmp-sel" id="cmp1" onchange="updateCompare()"></select>
-        <span class="cmp-vs">VS</span>
-        <select class="cmp-sel" id="cmp2" onchange="updateCompare()"></select>
-      </div>
-      <div class="cmp-box" id="cmpBox"><div class="cmp-col" id="cmpCol1"></div><div class="cmp-col" id="cmpCol2"></div></div>
-    </div>
+    <h4><span class="dot"></span>🤖 <span data-i18n="aiInsights">AI 洞察</span></h4>
+    <div class="ai-insight" data-i18n="aiInsight1">本周有 3 个国家更新了劳动法规，建议重点关注新加坡和泰国的变化。</div>
+    <div class="ai-insight" data-i18n="aiInsight2">马来西亚 EPF 缴费比例调整将于下月生效，需更新薪酬计算。</div>
 
-    <!-- Law List -->
-    <div class="lawlist">
-      <div class="ll-header">法规列表 <span id="llCount"></span></div>
-      <div id="lawList"></div>
-    </div>
-  </aside>
+    <h4><span class="dot"></span>📅 <span data-i18n="upcomingDates">即将生效</span></h4>
+    <div id="upcomingList"></div>
+
+    <h4><span class="dot"></span>💡 <span data-i18n="aiRecommendations">AI 建议</span></h4>
+    <div class="ai-rec" data-i18n="aiRec1">审查所有受影响国家的工资计算系统，确保合规。</div>
+    <div class="ai-rec" data-i18n="aiRec2">更新员工手册中关于休假政策的条款。</div>
+  </div>
 </div>
 
-<!-- DRAWER -->
+<!-- LAW DETAIL DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="drawer"><button class="drawer-close" onclick="closeDrawer()">✕</button><div id="drawerContent"></div></div>
+<div class="drawer" id="drawer">
+  <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  <div id="drawerContent"></div>
+</div>
 
 <!-- SETTINGS -->
-<div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
-  <div class="settings-panel">
-    <h2>⚙️ 设置</h2>
-    <div class="sfield"><label>DeepSeek API Key</label><input type="password" id="apiKeyInput" placeholder="sk-..."></div>
-    <div class="sfield"><label>AI 翻译测试</label><textarea id="translateInput" placeholder="输入需要翻译的文本..."></textarea>
-      <button class="hbtn" onclick="doTranslate()" style="margin-top:5px">翻译</button>
-      <div style="padding:6px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);min-height:36px;font-size:0.8rem;margin-top:4px;color:var(--text2)" id="translateResult"></div>
-    </div>
-    <div style="display:flex;gap:6px;margin-top:10px">
-      <button class="hbtn active" onclick="saveSettings()">保存</button>
-      <button class="hbtn" onclick="closeSettings()">关闭</button>
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-box">
+    <h2>⚙️ <span data-i18n="settings">设置</span></h2>
+    <label data-i18n="deepseekKey">DeepSeek API Key</label>
+    <input id="apiKeyInput" type="password" placeholder="sk-...">
+    <label data-i18n="langLabel">界面语言</label>
+    <select id="settingsLang"><option value="zh">中文</option><option value="en">English</option><option value="es">Español</option></select>
+    <div class="settings-actions">
+      <button class="hbtn" onclick="closeSettings()" data-i18n="cancel">取消</button>
+      <button class="hbtn active" onclick="saveSettings()" data-i18n="save">保存</button>
     </div>
   </div>
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast"></div>
-<!-- MOBILE -->
-<button class="mob-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">🔍</button>
+<div id="toast"></div>
+
+<!-- GLOBE TOOLTIP -->
+<div id="globeTip"><div id="gtFlag"></div><div id="gtName"></div><div id="gtRegion"></div><div id="gtCount"></div></div>
 
 <script>
-// ============ DATA ============
-const laborLawData = [
-  // ===== JAPAN =====
-  {id:"jp_001",country:"日本",countryCode:"JP",flag:"🇯🇵",region:"Asia",lawName:"労働基準法 (Labor Standards Act)",article:"第15条",category:"劳动合同",originalLanguage:"ja",originalText:"使用者は、労働契約の締結に際し、労働者に対して賃金、労働時間その他の労働条件を明示しなければならない。",chineseTranslation:"雇主在签订劳动合同时，必须向劳动者明示工资、工作时间及其他劳动条件。",officialUrl:"https://www.japaneselawtranslation.go.jp/en/laws/view/3567",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2020-04-01",change:"初始版本收录"},{date:"2025-04-01",change:"新增电子方式明示劳动条件的规定"}]},
-  {id:"jp_002",country:"日本",countryCode:"JP",flag:"🇯🇵",region:"Asia",lawName:"労働基準法 (Labor Standards Act)",article:"第32条",category:"工作时间",originalLanguage:"ja",originalText:"使用者は、労働者に、休憩時間を除き一週間について四十時間を超えて、労働させてはならない。",chineseTranslation:"雇主不得使劳动者在一周内（不含休息时间）工作超过40小时。",officialUrl:"https://www.japaneselawtranslation.go.jp/en/laws/view/3567",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2019-04-01",change:"工作方式改革法实施"},{date:"2025-04-01",change:"中小企业加班上限规制全面适用"}]},
-  {id:"jp_003",country:"日本",countryCode:"JP",flag:"🇯🇵",region:"Asia",lawName:"労働基準法 (Labor Standards Act)",article:"第39条",category:"休假",subcategory:"年假",originalLanguage:"ja",originalText:"使用者は、その雇入れの日から起算して六箇月間継続勤務し全労働日の八割以上出勤した労働者に対して、継続し、又は分割した十労働日の有給休暇を与えなければならない。",chineseTranslation:"对连续工作满6个月且出勤率达80%以上的劳动者，雇主必须给予10个工作日的带薪年假。",officialUrl:"https://www.japaneselawtranslation.go.jp/en/laws/view/3567",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2019-04-01",change:"强制5天年假取得义务化"},{date:"2025-04-01",change:"确认继续执行强制休假制度"}]},
+// ============ I18N ============
+let currentLang = localStorage.getItem('hr_lang') || 'zh';
+const i18n = {
+  zh: {
+    title:'🌐 全球劳动法汇总系统 v3.0', searchPlaceholder:'搜索法规...', all:'全部', sortDate:'按更新日期', sortCountry:'按国家',
+    heroTitle:'🤖 AI Employment Law Monitor', heroSub:'AI 自动监控各国家/地区劳动法更新',
+    kpiTitle:'关键指标', 法规总数:'法规总数', 覆盖国家:'覆盖国家', 法规类别:'法规类别', 最后更新:'最后更新',
+    complianceRisk:'合规风险评估', overallScore:'总体风险分数', riskNote:'基于最近法规变化评估',
+    aiInsights:'AI 洞察', aiInsight1:'本周有 3 个国家更新了劳动法规，建议重点关注新加坡和泰国的变化。',
+    aiInsight2:'马来西亚 EPF 缴费比例调整将于下月生效，需更新薪酬计算。',
+    upcomingDates:'即将生效', aiRecommendations:'AI 建议',
+    aiRec1:'审查所有受影响国家的工资计算系统，确保合规。', aiRec2:'更新员工手册中关于休假政策的条款。',
+    notifications:'通知中心', close:'关闭', profile:'个人资料', settings:'设置', logout:'退出登录', save:'保存', cancel:'取消',
+    deepseekKey:'DeepSeek API Key', langLabel:'界面语言',
+    globeInfo:'🖱️ 拖拽旋转 · 滚轮缩放 · 点击国家', laws:'条法规',
+    招聘管理:'招聘管理', 员工关系:'员工关系', 薪酬管理:'薪酬管理', 全部:'全部',
+    法定缴费类:'法定缴费类', 休假类:'休假类', 强制支付:'强制支付', 工时与加班:'工时与加班',
+    离职与遣散:'离职与遣散', 个税:'个税', 培训发展:'培训发展',
+    年假:'年假', 病假:'病假', 产假:'产假', 赔偿金:'赔偿金', 育儿假:'育儿假', 丧假:'丧假', 婚假:'婚假', 其他假期:'其他假期',
+    社保规定:'社保规定', 工作时间:'工作时间', 入职离职:'入职离职', 离职结算:'离职结算', 劳动合同:'劳动合同', 工资:'工资',
+    today:'今天', yesterday:'昨天', thisWeek:'本周', earlier:'更早',
+    viewDetails:'查看详情', effective:'生效', published:'发布', impact:'影响', modules:'受影响模块',
+    aiSummary:'AI 摘要', aiRecommendation:'AI 建议', officialSource:'官方来源', article:'条款',
+    原文:'原文', 中文翻译:'中文翻译', 变更历史:'变更历史', 查看官方:'查看官方',
+    en:{}, es:{}
+  },
+  en: {
+    title:'🌐 Global Labor Law System v3.0', searchPlaceholder:'Search laws...', all:'All', sortDate:'By Date', sortCountry:'By Country',
+    heroTitle:'🤖 AI Employment Law Monitor', heroSub:'AI automatically monitors employment law updates across countries',
+    kpiTitle:'Key Metrics', 法规总数:'Total Laws', 覆盖国家:'Countries', 法规类别:'Categories', 最后更新:'Last Updated',
+    complianceRisk:'Compliance Risk', overallScore:'Overall Score', riskNote:'Based on recent regulatory changes',
+    aiInsights:'AI Insights', aiInsight1:'3 countries updated labor laws this week. Focus on Singapore and Thailand.',
+    aiInsight2:'Malaysia EPF contribution adjustment takes effect next month — update payroll.',
+    upcomingDates:'Upcoming', aiRecommendations:'AI Recommendations',
+    aiRec1:'Review wage calculation systems in all affected countries.', aiRec2:'Update employee handbook leave policies.',
+    notifications:'Notifications', close:'Close', profile:'Profile', settings:'Settings', logout:'Log Out', save:'Save', cancel:'Cancel',
+    deepseekKey:'DeepSeek API Key', langLabel:'Language',
+    globeInfo:'🖱️ Drag · Scroll zoom · Click country', laws:'laws',
+    招聘管理:'Recruitment', 员工关系:'Employee Relations', 薪酬管理:'Compensation', 全部:'All',
+    法定缴费类:'Contributions', 休假类:'Leave', 强制支付:'Mandatory', 工时与加班:'Hours & OT',
+    离职与遣散:'Termination', 个税:'Income Tax', 培训发展:'Training',
+    年假:'Annual', 病假:'Sick', 产假:'Maternity', 赔偿金:'Severance', 育儿假:'Childcare', 丧假:'Bereavement', 婚假:'Marriage', 其他假期:'Other',
+    社保规定:'Social Security', 工作时间:'Working Hours', 入职离职:'Hiring & Exit', 离职结算:'Exit Settlement', 劳动合同:'Contract', 工资:'Wages',
+    today:'Today', yesterday:'Yesterday', thisWeek:'This Week', earlier:'Earlier',
+    viewDetails:'View Details', effective:'Effective', published:'Published', impact:'Impact', modules:'Modules',
+    aiSummary:'AI Summary', aiRecommendation:'AI Recommendation', officialSource:'Official Source', article:'Article',
+    原文:'Original', 中文翻译:'Translation', 变更历史:'History', 查看官方:'Official',
+    zh:{}, es:{}
+  },
+  es: {
+    title:'🌐 Sistema de Leyes Laborales v3.0', searchPlaceholder:'Buscar leyes...', all:'Todos', sortDate:'Por fecha', sortCountry:'Por país',
+    heroTitle:'🤖 Monitor de Leyes Laborales IA', heroSub:'IA monitorea automáticamente actualizaciones de leyes laborales',
+    kpiTitle:'Métricas Clave', 法规总数:'Total Leyes', 覆盖国家:'Países', 法规类别:'Categorías', 最后更新:'Actualizado',
+    complianceRisk:'Riesgo de Cumplimiento', overallScore:'Puntuación General', riskNote:'Basado en cambios regulatorios recientes',
+    aiInsights:'Insights IA', aiInsight1:'3 países actualizaron leyes laborales esta semana.',
+    aiInsight2:'Ajuste EPF de Malasia entra en vigor el próximo mes.',
+    upcomingDates:'Próximos', aiRecommendations:'Recomendaciones IA',
+    aiRec1:'Revisar sistemas de cálculo salarial.', aiRec2:'Actualizar políticas de permisos.',
+    notifications:'Notificaciones', close:'Cerrar', profile:'Perfil', settings:'Configuración', logout:'Salir', save:'Guardar', cancel:'Cancelar',
+    deepseekKey:'Clave API DeepSeek', langLabel:'Idioma',
+    globeInfo:'🖱️ Arrastrar · Zoom · Clic país', laws:'leyes',
+    招聘管理:'Reclutamiento', 员工关系:'Relaciones', 薪酬管理:'Compensación', 全部:'Todos',
+    法定缴费类:'Contribuciones', 休假类:'Permisos', 强制支付:'Mandatorio', 工时与加班:'Horas',
+    离职与遣散:'Terminación', 个税:'Impuestos', 培训发展:'Capacitación',
+    年假:'Anual', 病假:'Enfermedad', 产假:'Maternidad', 赔偿金:'Indemnización', 育儿假:'Parental', 丧假:'Duelo', 婚假:'Boda', 其他假期:'Otros',
+    社保规定:'Seg. Social', 工作时间:'Jornada', 入职离职:'Altas/Bajas', 离职结算:'Liquidación', 劳动合同:'Contrato', 工资:'Salario',
+    today:'Hoy', yesterday:'Ayer', thisWeek:'Esta semana', earlier:'Anterior',
+    viewDetails:'Ver detalles', effective:'Vigente', published:'Publicado', impact:'Impacto', modules:'Módulos',
+    aiSummary:'Resumen IA', aiRecommendation:'Recomendación IA', officialSource:'Fuente oficial', article:'Artículo',
+    原文:'Original', 中文翻译:'Traducción', 变更历史:'Historial', 查看官方:'Oficial',
+    zh:{}, en:{}
+  }
+};
+function t(key) { const d = i18n[currentLang] || i18n.zh; return d[key] || i18n.zh[key] || key; }
 
-  // ===== SOUTH KOREA =====
-  {id:"kr_001",country:"韩国",countryCode:"KR",flag:"🇰🇷",region:"Asia",lawName:"근로기준법 (Labor Standards Act)",article:"제17조",category:"劳动合同",originalLanguage:"ko",originalText:"사용자는 근로계약을 체결할 때에 근로자에게 임금, 소정근로시간, 휴일, 연차 유급휴가 등의 근로조건을 명시하여야 한다.",chineseTranslation:"雇主在签订劳动合同时，必须向劳动者明示工资、规定工作时间、休息日、年度带薪休假等劳动条件。",officialUrl:"https://www.law.go.kr/LSW/eng/engLsSc.do?menuId=2&section=lawNm&query=Labor+Standards+Act",lastUpdated:"2025-07-01",importance:"high",history:[{date:"2021-01-01",change:"初始版本收录"},{date:"2025-07-01",change:"增加短期合同书面通知义务"}]},
-  {id:"kr_002",country:"韩国",countryCode:"KR",flag:"🇰🇷",region:"Asia",lawName:"근로기준법 (Labor Standards Act)",article:"제50조",category:"工作时间",originalLanguage:"ko",originalText:"1주간의 근로시간은 휴게시간을 제외하고 40시간을 초과할 수 없다.",chineseTranslation:"一周的工作时间（不含休息时间）不得超过40小时。",officialUrl:"https://www.law.go.kr/LSW/eng/engLsSc.do?menuId=2&section=lawNm&query=Labor+Standards+Act",lastUpdated:"2025-07-01",importance:"high",history:[{date:"2018-07-01",change:"52小时工作制实施（大企业）"},{date:"2025-07-01",change:"弹性工作制扩大至6个月单位适用"}]},
-  {id:"kr_003",country:"韩国",countryCode:"KR",flag:"🇰🇷",region:"Asia",lawName:"국민연금법 (National Pension Act)",article:"제88조",category:"社保规定",originalLanguage:"ko",originalText:"사업장가입자의 기여금은 사용자와 가입자가 각각 부담한다. 기여금은 기준소득월액의 1000분의 90으로 한다.",chineseTranslation:"单位参保人的缴费由雇主和参保人各自承担。缴费率为基准月收入的9%。",officialUrl:"https://www.law.go.kr/LSW/eng/engLsSc.do?menuId=2&section=lawNm&query=National+Pension",lastUpdated:"2025-01-15",importance:"medium",history:[{date:"2022-01-01",change:"收录缴费比例规定"},{date:"2025-01-15",change:"确认维持9%费率不变"}]},
-
-  // ===== CHINA =====
-  {id:"cn_001",country:"中国",countryCode:"CN",flag:"🇨🇳",region:"Asia",lawName:"中华人民共和国劳动合同法",article:"第十条",category:"劳动合同",originalLanguage:"zh",originalText:"建立劳动关系，应当订立书面劳动合同。已建立劳动关系，未同时订立书面劳动合同的，应当自用工之日起一个月内订立书面劳动合同。",chineseTranslation:"建立劳动关系，应当订立书面劳动合同。已建立劳动关系，未同时订立书面劳动合同的，应当自用工之日起一个月内订立书面劳动合同。",officialUrl:"https://www.gov.cn/flfg/2007-06/29/content_669394.htm",lastUpdated:"2025-01-01",importance:"high",history:[{date:"2008-01-01",change:"劳动合同法正式实施"},{date:"2025-01-01",change:"确认现行规定有效"}]},
-  {id:"cn_002",country:"中国",countryCode:"CN",flag:"🇨🇳",region:"Asia",lawName:"中华人民共和国劳动法",article:"第三十六条",category:"工作时间",originalLanguage:"zh",originalText:"国家实行劳动者每日工作时间不超过八小时、平均每周工作时间不超过四十四小时的工时制度。",chineseTranslation:"国家实行劳动者每日工作时间不超过八小时、平均每周工作时间不超过四十四小时的工时制度。",officialUrl:"https://www.gov.cn/banshi/2005-05/25/content_905.htm",lastUpdated:"2025-01-01",importance:"high",history:[{date:"1995-01-01",change:"劳动法实施"},{date:"2025-01-01",change:"确认现行规定有效"}]},
-  {id:"cn_003",country:"中国",countryCode:"CN",flag:"🇨🇳",region:"Asia",lawName:"职工带薪年休假条例",article:"第三条",category:"休假",subcategory:"年假",originalLanguage:"zh",originalText:"职工累计工作已满1年不满10年的，年休假5天；已满10年不满20年的，年休假10天；已满20年的，年休假15天。",chineseTranslation:"职工累计工作已满1年不满10年的，年休假5天；已满10年不满20年的，年休假10天；已满20年的，年休假15天。",officialUrl:"https://www.gov.cn/zwgk/2007-12/16/content_836270.htm",lastUpdated:"2025-01-01",importance:"high",history:[{date:"2008-01-01",change:"条例正式实施"},{date:"2025-01-01",change:"确认现行规定有效"}]},
-
-  // ===== SINGAPORE =====
-  {id:"sg_001",country:"新加坡",countryCode:"SG",flag:"🇸🇬",region:"Asia",lawName:"Employment Act",article:"Part IV, Section 38",category:"工作时间",originalLanguage:"en",originalText:"An employee shall not be required under his contract of service to work more than 8 hours in one day or more than 44 hours in one week.",chineseTranslation:"雇员在劳动合同下每天工作不得超过8小时，每周不得超过44小时。",officialUrl:"https://sso.agc.gov.sg/Act/EmsA1968",lastUpdated:"2025-06-01",importance:"high",history:[{date:"2019-04-01",change:"覆盖范围扩大至所有雇员"},{date:"2025-06-01",change:"确认适用于月薪4500新元以下员工"}]},
-  {id:"sg_002",country:"新加坡",countryCode:"SG",flag:"🇸🇬",region:"Asia",lawName:"Employment Act",article:"Part IX, Section 88",category:"休假",subcategory:"病假",originalLanguage:"en",originalText:"An employee who has served an employer for not less than 3 months shall be entitled to paid sick leave.",chineseTranslation:"为雇主服务不少于3个月的雇员有权享受带薪病假。",officialUrl:"https://sso.agc.gov.sg/Act/EmsA1968",lastUpdated:"2025-06-01",importance:"medium",history:[{date:"2020-01-01",change:"收录带薪病假条款"},{date:"2025-06-01",change:"门诊14天+住院60天上限确认"}]},
-  {id:"sg_003",country:"新加坡",countryCode:"SG",flag:"🇸🇬",region:"Asia",lawName:"Central Provident Fund Act",article:"Section 7",category:"社保规定",originalLanguage:"en",originalText:"Every employer shall pay to the Fund contributions at the rates set out in the First Schedule in respect of every employee who is a citizen or permanent resident of Singapore.",chineseTranslation:"每位雇主须按第一附表规定的费率向中央公积金缴纳每位新加坡公民或永久居民雇员的缴费。",officialUrl:"https://sso.agc.gov.sg/Act/CPFA1953",lastUpdated:"2025-01-01",importance:"high",history:[{date:"2022-01-01",change:"55岁以上员工缴费率提高"},{date:"2025-01-01",change:"雇主缴费率维持17%（55岁以下）"}]},
-
-  // ===== VIETNAM =====
-  {id:"vn_001",country:"越南",countryCode:"VN",flag:"🇻🇳",region:"Asia",lawName:"Bộ luật Lao động (Labor Code)",article:"Điều 105",category:"工作时间",originalLanguage:"vi",originalText:"Thời giờ làm việc bình thường không quá 08 giờ trong 01 ngày và không quá 48 giờ trong 01 tuần.",chineseTranslation:"正常工作时间每天不超过8小时，每周不超过48小时。",officialUrl:"https://thuvienphapluat.vn/van-ban/Lao-dong-Tien-luong/Bo-Luat-lao-dong-2019-333670.aspx",lastUpdated:"2025-03-01",importance:"high",history:[{date:"2021-01-01",change:"2019年劳动法典生效"},{date:"2025-03-01",change:"周工作时间上限维持48小时"}]},
-  {id:"vn_002",country:"越南",countryCode:"VN",flag:"🇻🇳",region:"Asia",lawName:"Bộ luật Lao động (Labor Code)",article:"Điều 113",category:"休假",subcategory:"年假",originalLanguage:"vi",originalText:"Người lao động làm việc đủ 12 tháng cho một người sử dụng lao động thì được nghỉ hằng năm hưởng nguyên lương 12 ngày làm việc.",chineseTranslation:"为同一雇主工作满12个月的劳动者，享有12个工作日的带薪年假。",officialUrl:"https://thuvienphapluat.vn/van-ban/Lao-dong-Tien-luong/Bo-Luat-lao-dong-2019-333670.aspx",lastUpdated:"2025-03-01",importance:"medium",history:[{date:"2021-01-01",change:"2019年劳动法典生效"},{date:"2025-03-01",change:"确认年假规定不变"}]},
-  {id:"vn_003",country:"越南",countryCode:"VN",flag:"🇻🇳",region:"Asia",lawName:"Bộ luật Lao động (Labor Code)",article:"Điều 168",category:"社保规定",originalLanguage:"vi",originalText:"Người sử dụng lao động đóng bảo hiểm xã hội bắt buộc theo tỷ lệ phần trăm trên quỹ tiền lương tháng của người lao động.",chineseTranslation:"雇主按劳动者月工资基数的一定比例缴纳强制社会保险。",officialUrl:"https://thuvienphapluat.vn/van-ban/Lao-dong-Tien-luong/Bo-Luat-lao-dong-2019-333670.aspx",lastUpdated:"2025-03-01",importance:"high",history:[{date:"2021-01-01",change:"社保比例规定生效"},{date:"2025-03-01",change:"雇主承担约21.5%社保费用"}]},
-
-  // ===== MALAYSIA =====
-  {id:"my_001",country:"马来西亚",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"Employment Act 1955 (Amendment 2022)",article:"Section 60A",category:"工作时间",originalLanguage:"en",originalText:"An employee shall not be required to work more than forty-five hours in one week, exclusive of any period of time for meals or tea breaks.",chineseTranslation:"雇员每周工作时间（不含用餐或茶歇时间）不得超过45小时。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=61339",lastUpdated:"2025-01-01",importance:"high",history:[{date:"2023-01-01",change:"2022年修正案生效，周工时从48小时降至45小时"},{date:"2025-01-01",change:"确认45小时上限有效"}]},
-  {id:"my_002",country:"马来西亚",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"Employment Act 1955 (Amendment 2022)",article:"Section 60E",category:"休假",subcategory:"年假",originalLanguage:"en",originalText:"An employee shall be entitled to paid annual leave: less than 2 years service: 8 days; 2-5 years: 12 days; 5 years or more: 16 days.",chineseTranslation:"雇员有权享有带薪年假：工龄不足2年：8天；2-5年：12天；5年及以上：16天。",officialUrl:"https://jtksm.mohr.gov.my/en/borang/employment-act-1955",lastUpdated:"2026-03-01",importance:"high",history:[{date:"2023-01-01",change:"收录年假规定"},{date:"2026-03-01",change:"确认按工龄分档年假标准"}]},
-  {id:"my_004",country:"马来西亚",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"Employment Act 1955 (Amendment 2022)",article:"Section 60F",category:"休假",subcategory:"病假",originalLanguage:"en",originalText:"An employee shall be entitled to paid sick leave: 1-2 years service: 14 days; 2-5 years: 18 days; more than 5 years: 22 days. Hospitalization leave: up to 60 days per year.",chineseTranslation:"雇员有权享有带薪病假：服务1-2年：14天；2-5年：18天；5年以上：22天。住院假：每年最多60天。",officialUrl:"https://jtksm.mohr.gov.my/en/borang/employment-act-1955",lastUpdated:"2026-03-01",importance:"high",history:[{date:"2023-01-01",change:"收录病假规定"},{date:"2026-03-01",change:"确认按工龄分档病假标准"}]},
-  {id:"my_005",country:"马来西亚",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"Employment Act 1955 (Amendment 2022)",article:"Section 60L",category:"休假",subcategory:"产假",originalLanguage:"en",originalText:"A female employee shall be entitled to maternity leave of 98 consecutive days. Eligibility: employed for at least 90 days in the 9 months preceding confinement, and employed for at least 1 day in the 4 months preceding confinement. Maximum 5 surviving children.",chineseTranslation:"女性雇员有权享有98天连续产假。资格条件：分娩前9个月内至少受雇满90天，分娩前4个月内至少受雇满1天。存活子女少于5名。",officialUrl:"https://jtksm.mohr.gov.my/en/borang/employment-act-1955",lastUpdated:"2026-03-01",importance:"high",history:[{date:"2023-01-01",change:"产假从90天增至98天"},{date:"2026-03-01",change:"确认98天产假标准"}]},
-  {id:"my_006",country:"马来西亚",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"Employment Act 1955 (Amendment 2022)",article:"Section 60MA",category:"休假",subcategory:"陪产假",originalLanguage:"en",originalText:"A married male employee shall be entitled to paternity leave of 7 consecutive days. Eligibility: married, employed for at least 12 months with the same employer, and limited to the first 5 confinements.",chineseTranslation:"已婚男性雇员有权享有7天连续陪产假。资格条件：已婚，同一雇主处服务满12个月，仅限首5次分娩。",officialUrl:"https://jtksm.mohr.gov.my/en/borang/employment-act-1955",lastUpdated:"2026-03-01",importance:"high",history:[{date:"2023-01-01",change:"新增7天陪产假"},{date:"2026-03-01",change:"确认陪产假规定"}]},
-  {id:"my_007",country:"马来西亚",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"公司政策（非法定强制）",article:"N/A",category:"休假",subcategory:"婚假",originalLanguage:"en",originalText:"Marriage leave is not mandated by Malaysian employment law. Typically provided as a company benefit, usually 2-3 days paid leave.",chineseTranslation:"马来西亚雇佣法令未规定强制婚假。通常作为公司福利提供，一般为2-3天带薪假。",officialUrl:"N/A",lastUpdated:"2026-03-01",importance:"medium",history:[{date:"2026-03-01",change:"确认婚假为公司福利"}]},
-  {id:"my_008",country:"马来西亚",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"公司政策（非法定强制）",article:"N/A",category:"休假",subcategory:"丧假",originalLanguage:"en",originalText:"Bereavement leave is not mandated by Malaysian employment law. Typically provided as a company benefit, usually 2-3 days paid leave.",chineseTranslation:"马来西亚雇佣法令未规定强制丧假。通常作为公司福利提供，一般为2-3天带薪假。",officialUrl:"N/A",lastUpdated:"2026-03-01",importance:"medium",history:[{date:"2026-03-01",change:"确认丧假为公司福利"}]},
-  {id:"my_009",country:"马来西亚",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"公司政策（非法定强制）",article:"N/A",category:"休假",subcategory:"育儿假",originalLanguage:"en",originalText:"Childcare leave is not mandated by Malaysian employment law. Typically provided as a company benefit.",chineseTranslation:"马来西亚雇佣法令未规定强制育儿假。通常作为公司福利提供。",officialUrl:"N/A",lastUpdated:"2026-03-01",importance:"medium",history:[{date:"2026-03-01",change:"确认育儿假为公司福利"}]},
-  {id:"my_003",country:"马来西亚",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"Employment Act 1955 (Amendment 2022)",article:"Section 12",category:"入职离职",originalLanguage:"en",originalText:"Either party to a contract of service may at any time give to the other party notice of his intention to terminate such contract of service.",chineseTranslation:"劳动合同任何一方可在任何时候向另一方发出终止合同的通知。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=61339",lastUpdated:"2025-01-01",importance:"medium",history:[{date:"2023-01-01",change:"收录解雇通知条款"},{date:"2025-01-01",change:"通知期按服务年限1-8周"}]},
-
-  // ===== INDONESIA =====
-  {id:"id_001",country:"印度尼西亚",countryCode:"ID",flag:"🇮🇩",region:"Asia",lawName:"Undang-Undang Cipta Kerja (Job Creation Law)",article:"Pasal 81 angka 21",category:"工作时间",originalLanguage:"id",originalText:"Waktu kerja sebagaimana dimaksud meliputi 7 jam 1 hari dan 40 jam 1 minggu untuk 6 hari kerja dalam 1 minggu.",chineseTranslation:"工作时间规定为每天7小时，每周6个工作日共40小时。",officialUrl:"https://jdih.kemnaker.go.id/",lastUpdated:"2025-02-01",importance:"high",history:[{date:"2021-02-02",change:"综合就业法正式实施"},{date:"2025-02-01",change:"宪法法院判决后部分条款修订"}]},
-  {id:"id_002",country:"印度尼西亚",countryCode:"ID",flag:"🇮🇩",region:"Asia",lawName:"Undang-Undang Cipta Kerja (Job Creation Law)",article:"Pasal 81 angka 25",category:"休假",subcategory:"年假",originalLanguage:"id",originalText:"Setiap pekerja/buruh yang telah bekerja selama 12 bulan secara terus menerus berhak atas cuti tahunan sekurang-kurangnya 12 hari kerja.",chineseTranslation:"连续工作满12个月的劳动者有权享有至少12个工作日的年假。",officialUrl:"https://jdih.kemnaker.go.id/",lastUpdated:"2025-02-01",importance:"medium",history:[{date:"2021-02-02",change:"收录年假条款"},{date:"2025-02-01",change:"确认12天最低年假"}]},
-  {id:"id_003",country:"印度尼西亚",countryCode:"ID",flag:"🇮🇩",region:"Asia",lawName:"Peraturan Pemerintah No. 35/2021",article:"Pasal 40",category:"入职离职",originalLanguage:"id",originalText:"Dalam hal terjadi pemutusan hubungan kerja, pengusaha wajib membayar uang pesangon dan/atau uang penghargaan masa kerja.",chineseTranslation:"发生劳动关系终止时，雇主必须支付遣散费和/或工龄奖励金。",officialUrl:"https://jdih.kemnaker.go.id/",lastUpdated:"2025-02-01",importance:"high",history:[{date:"2021-02-02",change:"新遣散费计算规则生效"},{date:"2025-02-01",change:"遣散费上限调整为0.5倍原标准"}]},
-
-  // ===== PHILIPPINES =====
-  {id:"ph_001",country:"菲律宾",countryCode:"PH",flag:"🇵🇭",region:"Asia",lawName:"Labor Code of the Philippines",article:"Article 83",category:"工作时间",originalLanguage:"en",originalText:"The normal hours of work of any employee shall not exceed eight hours a day.",chineseTranslation:"任何雇员的正常工作时间每天不得超过8小时。",officialUrl:"https://www.dole.gov.ph/labor-code/",lastUpdated:"2025-05-01",importance:"high",history:[{date:"2020-01-01",change:"收录基本工时规定"},{date:"2025-05-01",change:"弹性工作安排指南更新"}]},
-  {id:"ph_002",country:"菲律宾",countryCode:"PH",flag:"🇵🇭",region:"Asia",lawName:"Labor Code of the Philippines",article:"Article 95",category:"休假",subcategory:"年假",originalLanguage:"en",originalText:"Every employee who has rendered at least one year of service shall be entitled to a yearly service incentive leave of five days with pay.",chineseTranslation:"服务满一年的雇员有权享有每年5天带薪服务激励假。",officialUrl:"https://www.dole.gov.ph/labor-code/",lastUpdated:"2025-05-01",importance:"medium",history:[{date:"2020-01-01",change:"收录服务激励假条款"},{date:"2025-05-01",change:"确认5天最低标准"}]},
-  {id:"ph_003",country:"菲律宾",countryCode:"PH",flag:"🇵🇭",region:"Asia",lawName:"Social Security Act of 2018 (RA 11199)",article:"Section 18",category:"社保规定",originalLanguage:"en",originalText:"The contribution rate for covered employees shall be shared between the employer and employee based on the monthly salary credit schedule.",chineseTranslation:"受保雇员的缴费率由雇主和雇员根据月薪基数表共同分担。",officialUrl:"https://www.sss.gov.ph/",lastUpdated:"2025-01-01",importance:"high",history:[{date:"2019-01-01",change:"2018年社保法案生效"},{date:"2025-01-01",change:"雇主缴费率提高至9.5%"}]},
-
-  // ===== INDIA =====
-  {id:"in_001",country:"印度",countryCode:"IN",flag:"🇮🇳",region:"Asia",lawName:"Code on Wages, 2019",article:"Section 9",category:"工资",originalLanguage:"en",originalText:"The Central Government shall fix the floor wage taking into account minimum living standards of a worker and such floor wage may be different for different geographical areas.",chineseTranslation:"中央政府应考虑工人最低生活标准确定最低工资基准线，不同地区可有不同标准。",officialUrl:"https://labour.gov.in/code-on-wages",lastUpdated:"2025-08-01",importance:"high",history:[{date:"2019-08-01",change:"工资法典获得总统批准"},{date:"2025-08-01",change:"全国最低工资基准线修订"}]},
-  {id:"in_002",country:"印度",countryCode:"IN",flag:"🇮🇳",region:"Asia",lawName:"Code on Social Security, 2020",article:"Section 16",category:"社保规定",originalLanguage:"en",originalText:"The employer shall pay as employer's contribution to the provident fund at the rate of twelve per cent of the basic wages, dearness allowance and retaining allowance.",chineseTranslation:"雇主应按基本工资、物价补贴和留任津贴的12%缴纳公积金雇主缴费。",officialUrl:"https://labour.gov.in/code-on-social-security",lastUpdated:"2025-08-01",importance:"high",history:[{date:"2020-09-28",change:"社会保障法典获得批准"},{date:"2025-08-01",change:"确认EPF雇主缴费率12%"}]},
-  {id:"in_003",country:"印度",countryCode:"IN",flag:"🇮🇳",region:"Asia",lawName:"Industrial Relations Code, 2020",article:"Section 77",category:"入职离职",originalLanguage:"en",originalText:"No employer shall retrench any worker who has been in continuous service for not less than one year without giving three months' notice in writing or payment in lieu thereof.",chineseTranslation:"雇主不得解雇连续服务满一年的工人，除非提前三个月书面通知或支付相应补偿。",officialUrl:"https://labour.gov.in/industrial-relations-code",lastUpdated:"2025-08-01",importance:"high",history:[{date:"2020-09-28",change:"产业关系法典获批"},{date:"2025-08-01",change:"适用门槛从100人提高至300人"}]},
-
-  // ===== THAILAND =====
-  {id:"th_001",country:"泰国",countryCode:"TH",flag:"🇹🇭",region:"Asia",lawName:"พระราชบัญญัติคุ้มครองแรงงาน (Labor Protection Act)",article:"มาตรา 23",category:"工作时间",originalLanguage:"th",originalText:"ให้นายจ้างกำหนดเวลาทำงานปกติวันหนึ่งไม่เกินแปดชั่วโมง และสัปดาห์หนึ่งไม่เกินสี่สิบแปดชั่วโมง",chineseTranslation:"雇主应规定正常工作时间每天不超过8小时，每周不超过48小时。",officialUrl:"https://www.labour.go.th/",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2019-04-01",change:"B.E. 2562修正案生效"},{date:"2025-04-01",change:"维持48小时周工时上限"}]},
-  {id:"th_002",country:"泰国",countryCode:"TH",flag:"🇹🇭",region:"Asia",lawName:"พระราชบัญญัติคุ้มครองแรงงาน (Labor Protection Act)",article:"มาตรา 30",category:"休假",subcategory:"年假",originalLanguage:"th",originalText:"ลูกจ้างซึ่งทำงานติดต่อกันมาแล้วครบหนึ่งปี มีสิทธิหยุดพักผ่อนประจำปีได้ปีหนึ่งไม่น้อยกว่าหกวันทำงาน",chineseTranslation:"连续工作满一年的雇员有权享有每年不少于6个工作日的年假。",officialUrl:"https://www.labour.go.th/",lastUpdated:"2025-04-01",importance:"medium",history:[{date:"2019-04-01",change:"收录年假规定"},{date:"2025-04-01",change:"确认最低6天年假标准"}]},
-  {id:"th_003",country:"泰国",countryCode:"TH",flag:"🇹🇭",region:"Asia",lawName:"พระราชบัญญัติคุ้มครองแรงงาน (Labor Protection Act)",article:"มาตรา 118",category:"入职离职",originalLanguage:"th",originalText:"ให้นายจ้างจ่ายค่าชดเชยให้แก่ลูกจ้างซึ่งถูกเลิกจ้างตามอัตราที่กำหนด",chineseTranslation:"雇主应按规定标准向被解雇的雇员支付补偿金。",officialUrl:"https://www.labour.go.th/",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2019-04-01",change:"新增20年以上工龄400天补偿"},{date:"2025-04-01",change:"补偿标准确认有效"}]},
-
-  // ===== GERMANY =====
-  {id:"de_001",country:"德国",countryCode:"DE",flag:"🇩🇪",region:"Europe",lawName:"Arbeitszeitgesetz (Working Time Act)",article:"§3",category:"工作时间",originalLanguage:"de",originalText:"Die werktägliche Arbeitszeit der Arbeitnehmer darf acht Stunden nicht überschreiten. Sie kann auf bis zu zehn Stunden nur verlängert werden, wenn innerhalb von sechs Kalendermonaten im Durchschnitt acht Stunden werktäglich nicht überschritten werden.",chineseTranslation:"雇员每个工作日的工作时间不得超过8小时。仅在6个月内平均每工作日不超过8小时的情况下，可延长至10小时。",officialUrl:"https://www.gesetze-im-internet.de/arbzg/",lastUpdated:"2025-06-01",importance:"high",history:[{date:"2020-01-01",change:"收录工时法基本规定"},{date:"2025-06-01",change:"远程办公工时记录义务讨论中"}]},
-  {id:"de_002",country:"德国",countryCode:"DE",flag:"🇩🇪",region:"Europe",lawName:"Bundesurlaubsgesetz (Federal Leave Act)",article:"§3",category:"休假",subcategory:"年假",originalLanguage:"de",originalText:"Der Urlaub beträgt jährlich mindestens 24 Werktage.",chineseTranslation:"年假每年至少为24个工作日（基于每周6天工作制，相当于每周5天制下的20天）。",officialUrl:"https://www.gesetze-im-internet.de/burlg/",lastUpdated:"2025-06-01",importance:"high",history:[{date:"2020-01-01",change:"收录联邦年假法规定"},{date:"2025-06-01",change:"确认最低20天（5天工作制）标准"}]},
-  {id:"de_003",country:"德国",countryCode:"DE",flag:"🇩🇪",region:"Europe",lawName:"Kündigungsschutzgesetz (Protection Against Dismissal Act)",article:"§1",category:"入职离职",originalLanguage:"de",originalText:"Die Kündigung des Arbeitsverhältnisses gegenüber einem Arbeitnehmer ist rechtsunwirksam, wenn sie sozial ungerechtfertigt ist.",chineseTranslation:"对雇员的劳动关系终止如果属于社会性不正当解雇，则该解雇无效。",officialUrl:"https://www.gesetze-im-internet.de/kschg/",lastUpdated:"2025-06-01",importance:"high",history:[{date:"2020-01-01",change:"收录解雇保护法"},{date:"2025-06-01",change:"适用于10人以上企业确认"}]},
-
-  // ===== FRANCE =====
-  {id:"fr_001",country:"法国",countryCode:"FR",flag:"🇫🇷",region:"Europe",lawName:"Code du travail",article:"L3121-27",category:"工作时间",originalLanguage:"fr",originalText:"La durée légale de travail effectif des salariés à temps complet est fixée à trente-cinq heures par semaine.",chineseTranslation:"全职雇员的法定有效工作时间定为每周35小时。",officialUrl:"https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033020517",lastUpdated:"2025-09-01",importance:"high",history:[{date:"2000-02-01",change:"35小时工作制全面实施"},{date:"2025-09-01",change:"维持35小时法定标准"}]},
-  {id:"fr_002",country:"法国",countryCode:"FR",flag:"🇫🇷",region:"Europe",lawName:"Code du travail",article:"L3141-3",category:"休假",subcategory:"年假",originalLanguage:"fr",originalText:"Le salarié a droit à un congé de deux jours et demi ouvrables par mois de travail effectif chez le même employeur.",chineseTranslation:"雇员有权就在同一雇主处每月有效工作获得2.5个工作日的休假（每年共30个工作日/5周）。",officialUrl:"https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033020285",lastUpdated:"2025-09-01",importance:"high",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-09-01",change:"确认每年5周带薪年假标准"}]},
-  {id:"fr_003",country:"法国",countryCode:"FR",flag:"🇫🇷",region:"Europe",lawName:"Code du travail",article:"L1232-1",category:"入职离职",originalLanguage:"fr",originalText:"Tout licenciement pour motif personnel est motivé. Il est justifié par une cause réelle et sérieuse.",chineseTranslation:"任何基于个人原因的解雇都必须说明理由，且须有真实和严肃的原因。",officialUrl:"https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006901060",lastUpdated:"2025-09-01",importance:"high",history:[{date:"2020-01-01",change:"收录解雇正当理由规定"},{date:"2025-09-01",change:"Macron法令赔偿上限表确认有效"}]},
-
-  // ===== UK =====
-  {id:"gb_001",country:"英国",countryCode:"GB",flag:"🇬🇧",region:"Europe",lawName:"Working Time Regulations 1998",article:"Regulation 4",category:"工作时间",originalLanguage:"en",originalText:"A worker's working time, including overtime, in any reference period shall not exceed an average of 48 hours for each seven days.",chineseTranslation:"在任何参考期间内，工人的工作时间（含加班）平均每7天不得超过48小时。",officialUrl:"https://www.legislation.gov.uk/uksi/1998/1833/regulation/4",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2020-01-01",change:"脱欧后保留EU工时指令"},{date:"2025-04-01",change:"确认48小时周工时上限（可选择退出）"}]},
-  {id:"gb_002",country:"英国",countryCode:"GB",flag:"🇬🇧",region:"Europe",lawName:"Working Time Regulations 1998",article:"Regulation 13",category:"休假",subcategory:"年假",originalLanguage:"en",originalText:"A worker is entitled to 5.6 weeks' annual leave in each leave year.",chineseTranslation:"每位工人在每个休假年度中有权享有5.6周的年假（即28天，含公共假日）。",officialUrl:"https://www.legislation.gov.uk/uksi/1998/1833/regulation/13",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-04-01",change:"确认5.6周/28天标准"}]},
-  {id:"gb_003",country:"英国",countryCode:"GB",flag:"🇬🇧",region:"Europe",lawName:"Employment Rights Act 1996",article:"Section 86",category:"入职离职",originalLanguage:"en",originalText:"The notice required to be given by an employer to terminate the contract of employment of a person who has been continuously employed for one month or more shall be not less than one week's notice.",chineseTranslation:"雇主终止连续雇佣满一个月以上人员的合同，通知期不得少于一周。",officialUrl:"https://www.legislation.gov.uk/ukpga/1996/18/section/86",lastUpdated:"2025-04-01",importance:"medium",history:[{date:"2020-01-01",change:"收录最低通知期规定"},{date:"2025-04-01",change:"每满一年增加一周，最多12周"}]},
-
-  // ===== ITALY =====
-  {id:"it_001",country:"意大利",countryCode:"IT",flag:"🇮🇹",region:"Europe",lawName:"Decreto Legislativo 66/2003",article:"Art. 3",category:"工作时间",originalLanguage:"it",originalText:"L'orario normale di lavoro è fissato in 40 ore settimanali.",chineseTranslation:"正常工作时间定为每周40小时。",officialUrl:"https://www.gazzettaufficiale.it/eli/id/2003/04/14/003G0089/sg",lastUpdated:"2025-05-01",importance:"high",history:[{date:"2020-01-01",change:"收录工时规定"},{date:"2025-05-01",change:"集体合同可约定更短工时"}]},
-  {id:"it_002",country:"意大利",countryCode:"IT",flag:"🇮🇹",region:"Europe",lawName:"Decreto Legislativo 66/2003",article:"Art. 10",category:"休假",subcategory:"年假",originalLanguage:"it",originalText:"Il lavoratore ha diritto ad un periodo annuale di ferie retribuite non inferiore a quattro settimane.",chineseTranslation:"劳动者有权享有不少于4周的带薪年假。",officialUrl:"https://www.gazzettaufficiale.it/eli/id/2003/04/14/003G0089/sg",lastUpdated:"2025-05-01",importance:"high",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-05-01",change:"确认最低4周年假"}]},
-  {id:"it_003",country:"意大利",countryCode:"IT",flag:"🇮🇹",region:"Europe",lawName:"Legge 604/1966",article:"Art. 1",category:"入职离职",originalLanguage:"it",originalText:"Il licenziamento del prestatore di lavoro non può avvenire che per giusta causa o per giustificato motivo.",chineseTranslation:"解雇劳动者只能基于正当理由或合理动机。",officialUrl:"https://www.gazzettaufficiale.it/eli/id/1966/07/06/066U0604/sg",lastUpdated:"2025-05-01",importance:"high",history:[{date:"2020-01-01",change:"收录解雇限制规定"},{date:"2025-05-01",change:"Jobs Act递增保护制度确认"}]},
-
-  // ===== NETHERLANDS =====
-  {id:"nl_001",country:"荷兰",countryCode:"NL",flag:"🇳🇱",region:"Europe",lawName:"Arbeidstijdenwet (Working Hours Act)",article:"Art. 5:7",category:"工作时间",originalLanguage:"nl",originalText:"De werknemer verricht per dienst maximaal 12 uur arbeid en per week maximaal 60 uur arbeid.",chineseTranslation:"雇员每班次最多工作12小时，每周最多工作60小时（但4周平均不超过55小时，16周平均不超过48小时）。",officialUrl:"https://wetten.overheid.nl/BWBR0007671",lastUpdated:"2025-03-01",importance:"high",history:[{date:"2020-01-01",change:"收录工时法规定"},{date:"2025-03-01",change:"确认平均48小时/周上限"}]},
-  {id:"nl_002",country:"荷兰",countryCode:"NL",flag:"🇳🇱",region:"Europe",lawName:"Burgerlijk Wetboek Boek 7 (Civil Code Book 7)",article:"Art. 7:634",category:"休假",subcategory:"年假",originalLanguage:"nl",originalText:"De werknemer verwerft over ieder jaar waarin hij gedurende de volledige overeengekomen arbeidsduur recht op loon heeft gehad, aanspraak op vakantie van ten minste vier maal de overeengekomen arbeidsduur per week.",chineseTranslation:"雇员在全年全职工作的情况下，有权获得至少相当于4倍约定周工作时间的年假（即4周/20天）。",officialUrl:"https://wetten.overheid.nl/BWBR0005290",lastUpdated:"2025-03-01",importance:"medium",history:[{date:"2020-01-01",change:"收录法定最低年假"},{date:"2025-03-01",change:"确认最低20天（含集体协议通常25天）"}]},
-  {id:"nl_003",country:"荷兰",countryCode:"NL",flag:"🇳🇱",region:"Europe",lawName:"Burgerlijk Wetboek Boek 7 (Civil Code Book 7)",article:"Art. 7:610",category:"劳动合同",originalLanguage:"nl",originalText:"De arbeidsovereenkomst is de overeenkomst waarbij de ene partij, de werknemer, zich verbindt in dienst van de andere partij, de werkgever, tegen loon gedurende zekere tijd arbeid te verrichten.",chineseTranslation:"劳动合同是一方（雇员）承诺在另一方（雇主）的指导下，在一定时期内以获取报酬为目的从事劳动的协议。",officialUrl:"https://wetten.overheid.nl/BWBR0005290",lastUpdated:"2025-03-01",importance:"medium",history:[{date:"2020-01-01",change:"收录劳动合同定义"},{date:"2025-03-01",change:"平台工人劳动关系推定规则草案"}]},
-
-  // ===== POLAND =====
-  {id:"pl_001",country:"波兰",countryCode:"PL",flag:"🇵🇱",region:"Europe",lawName:"Kodeks pracy (Labour Code)",article:"Art. 129 §1",category:"工作时间",originalLanguage:"pl",originalText:"Czas pracy nie może przekraczać 8 godzin na dobę i przeciętnie 40 godzin w przeciętnie pięciodniowym tygodniu pracy.",chineseTranslation:"工作时间每天不得超过8小时，每周平均5天工作制下平均不超过40小时。",officialUrl:"https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=wdu19740240141",lastUpdated:"2025-02-01",importance:"high",history:[{date:"2020-01-01",change:"收录工时规定"},{date:"2025-02-01",change:"远程工作工时记录规则更新"}]},
-  {id:"pl_002",country:"波兰",countryCode:"PL",flag:"🇵🇱",region:"Europe",lawName:"Kodeks pracy (Labour Code)",article:"Art. 154 §1",category:"休假",subcategory:"年假",originalLanguage:"pl",originalText:"Wymiar urlopu wynosi 20 dni — jeżeli pracownik jest zatrudniony krócej niż 10 lat, 26 dni — jeżeli pracownik jest zatrudniony co najmniej 10 lat.",chineseTranslation:"年假天数：工龄不满10年为20天；工龄满10年及以上为26天。",officialUrl:"https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=wdu19740240141",lastUpdated:"2025-02-01",importance:"medium",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-02-01",change:"确认20/26天标准有效"}]},
-  {id:"pl_003",country:"波兰",countryCode:"PL",flag:"🇵🇱",region:"Europe",lawName:"Kodeks pracy (Labour Code)",article:"Art. 30",category:"劳动合同",originalLanguage:"pl",originalText:"Umowa o pracę rozwiązuje się na mocy porozumienia stron, przez oświadczenie jednej ze stron z zachowaniem okresu wypowiedzenia lub bez zachowania okresu wypowiedzenia.",chineseTranslation:"劳动合同可以通过双方协商解除、一方通知并遵守通知期或不遵守通知期而解除。",officialUrl:"https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=wdu19740240141",lastUpdated:"2025-02-01",importance:"medium",history:[{date:"2020-01-01",change:"收录合同解除方式"},{date:"2025-02-01",change:"无固定期限合同保护加强"}]},
-
-  // ===== SPAIN =====
-  {id:"es_001",country:"西班牙",countryCode:"ES",flag:"🇪🇸",region:"Europe",lawName:"Estatuto de los Trabajadores",article:"Art. 34.1",category:"工作时间",originalLanguage:"es",originalText:"La duración máxima de la jornada ordinaria de trabajo será de cuarenta horas semanales de trabajo efectivo de promedio en cómputo anual.",chineseTranslation:"普通工作日的最长时间为年度平均计算每周有效工作40小时。",officialUrl:"https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430",lastUpdated:"2025-07-01",importance:"high",history:[{date:"2020-01-01",change:"收录工时规定"},{date:"2025-07-01",change:"37.5小时/周法案讨论中"}]},
-  {id:"es_002",country:"西班牙",countryCode:"ES",flag:"🇪🇸",region:"Europe",lawName:"Estatuto de los Trabajadores",article:"Art. 38.1",category:"休假",subcategory:"年假",originalLanguage:"es",originalText:"El período de vacaciones anuales retribuidas será el pactado en convenio colectivo o contrato individual. En ningún caso la duración será inferior a treinta días naturales.",chineseTranslation:"带薪年假期限由集体协议或个人合同约定，但不得少于30个自然日。",officialUrl:"https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430",lastUpdated:"2025-07-01",importance:"high",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-07-01",change:"确认最低30自然日标准"}]},
-  {id:"es_003",country:"西班牙",countryCode:"ES",flag:"🇪🇸",region:"Europe",lawName:"Estatuto de los Trabajadores",article:"Art. 26.1",category:"工资",originalLanguage:"es",originalText:"Se considerará salario la totalidad de las percepciones económicas de los trabajadores, en dinero o en especie, por la prestación profesional de los servicios laborales por cuenta ajena.",chineseTranslation:"工资是指工人因提供受雇劳务而获得的全部经济报酬，无论是货币还是实物形式。",officialUrl:"https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430",lastUpdated:"2025-07-01",importance:"medium",history:[{date:"2020-01-01",change:"收录工资定义"},{date:"2025-07-01",change:"2025年最低工资提高至1134欧元/月"}]},
-
-  // ===== SWEDEN =====
-  {id:"se_001",country:"瑞典",countryCode:"SE",flag:"🇸🇪",region:"Europe",lawName:"Arbetstidslag (Working Hours Act)",article:"§5",category:"工作时间",originalLanguage:"sv",originalText:"Den ordinarie arbetstiden får uppgå till högst 40 timmar i veckan.",chineseTranslation:"正常工作时间每周最多为40小时。",officialUrl:"https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/arbetstidslag-1982673_sfs-1982-673/",lastUpdated:"2025-03-01",importance:"high",history:[{date:"2020-01-01",change:"收录工时法规定"},{date:"2025-03-01",change:"集体协议通常约定37.5-40小时"}]},
-  {id:"se_002",country:"瑞典",countryCode:"SE",flag:"🇸🇪",region:"Europe",lawName:"Semesterlag (Annual Leave Act)",article:"§4",category:"休假",subcategory:"年假",originalLanguage:"sv",originalText:"En arbetstagare har rätt till tjugofem semesterdagar varje semesterår.",chineseTranslation:"每位雇员每个休假年度有权享有25天年假。",officialUrl:"https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/semesterlag-1977480_sfs-1977-480/",lastUpdated:"2025-03-01",importance:"high",history:[{date:"2020-01-01",change:"收录年假法规定"},{date:"2025-03-01",change:"确认法定25天年假"}]},
-  {id:"se_003",country:"瑞典",countryCode:"SE",flag:"🇸🇪",region:"Europe",lawName:"Lagen om anställningsskydd (Employment Protection Act)",article:"§11",category:"入职离职",originalLanguage:"sv",originalText:"En uppsägning från arbetsgivarens sida ska vara sakligt grundad.",chineseTranslation:"雇主的解雇必须基于客观合理的理由。",officialUrl:"https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/lag-1982680-om-anstallningsskydd_sfs-1982-680/",lastUpdated:"2025-03-01",importance:"high",history:[{date:"2020-01-01",change:"收录解雇保护规定"},{date:"2025-03-01",change:"2022年改革：saklig grund改为sakliga skäl"}]},
-
-  // ===== USA =====
-  {id:"us_001",country:"美国",countryCode:"US",flag:"🇺🇸",region:"Americas",lawName:"Fair Labor Standards Act (FLSA)",article:"Section 207",category:"工作时间",originalLanguage:"en",originalText:"No employer shall employ any of his employees for a workweek longer than forty hours unless such employee receives compensation for his employment in excess of the hours above specified at a rate not less than one and one-half times the regular rate.",chineseTranslation:"雇主不得让雇员每周工作超过40小时，除非对超出部分支付不低于正常工资1.5倍的报酬。",officialUrl:"https://www.dol.gov/agencies/whd/flsa",lastUpdated:"2025-10-01",importance:"high",history:[{date:"2020-01-01",change:"收录FLSA加班规定"},{date:"2025-10-01",change:"加班豁免薪资门槛提高至58,656美元/年"}]},
-  {id:"us_002",country:"美国",countryCode:"US",flag:"🇺🇸",region:"Americas",lawName:"Fair Labor Standards Act (FLSA)",article:"Section 206",category:"工资",originalLanguage:"en",originalText:"Every employer shall pay to each of his employees wages at a rate not less than the federal minimum wage rate as prescribed.",chineseTranslation:"每位雇主必须按不低于联邦最低工资标准向每位雇员支付工资。",officialUrl:"https://www.dol.gov/agencies/whd/minimum-wage",lastUpdated:"2025-10-01",importance:"high",history:[{date:"2009-07-24",change:"联邦最低工资定为7.25美元/小时"},{date:"2025-10-01",change:"联邦标准维持7.25美元，多州自行提高"}]},
-  {id:"us_003",country:"美国",countryCode:"US",flag:"🇺🇸",region:"Americas",lawName:"Family and Medical Leave Act (FMLA)",article:"Section 102",category:"休假",subcategory:"其他假期",originalLanguage:"en",originalText:"An eligible employee shall be entitled to a total of 12 workweeks of leave during any 12-month period for specified family and medical reasons.",chineseTranslation:"符合条件的雇员在任何12个月期间有权因特定家庭和医疗原因享有共12周的假期（无薪）。",officialUrl:"https://www.dol.gov/agencies/whd/fmla",lastUpdated:"2025-10-01",importance:"high",history:[{date:"1993-08-05",change:"FMLA正式实施"},{date:"2025-10-01",change:"适用于50人以上企业确认"}]},
-
-  // ===== CANADA =====
-  {id:"ca_001",country:"加拿大",countryCode:"CA",flag:"🇨🇦",region:"Americas",lawName:"Canada Labour Code",article:"Part III, Section 169",category:"工作时间",originalLanguage:"en",originalText:"The standard hours of work of an employee shall not exceed eight hours in a day and forty hours in a week.",chineseTranslation:"雇员的标准工作时间每天不得超过8小时，每周不得超过40小时。",officialUrl:"https://laws-lois.justice.gc.ca/eng/acts/l-2/",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2020-01-01",change:"收录联邦劳工标准"},{date:"2025-04-01",change:"弹性工时安排权利确认"}]},
-  {id:"ca_002",country:"加拿大",countryCode:"CA",flag:"🇨🇦",region:"Americas",lawName:"Canada Labour Code",article:"Part III, Section 184",category:"休假",subcategory:"年假",originalLanguage:"en",originalText:"Every employee is entitled to and shall be granted a vacation with vacation pay of at least two weeks for each completed year of employment.",chineseTranslation:"每位雇员有权获得每满一年服务至少两周的带薪年假。",officialUrl:"https://laws-lois.justice.gc.ca/eng/acts/l-2/",lastUpdated:"2025-04-01",importance:"medium",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-04-01",change:"满5年服务增至3周年假"}]},
-  {id:"ca_003",country:"加拿大",countryCode:"CA",flag:"🇨🇦",region:"Americas",lawName:"Canada Labour Code",article:"Part III, Section 177.1",category:"工资",originalLanguage:"en",originalText:"The Governor in Council may fix a minimum wage applicable to employees.",chineseTranslation:"总督会同枢密院可确定适用于雇员的最低工资。",officialUrl:"https://laws-lois.justice.gc.ca/eng/acts/l-2/",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2021-12-29",change:"联邦最低工资挂钩CPI"},{date:"2025-04-01",change:"联邦最低工资提高至17.75加元/小时"}]},
-
-  // ===== BRAZIL =====
-  {id:"br_001",country:"巴西",countryCode:"BR",flag:"🇧🇷",region:"Americas",lawName:"Consolidação das Leis do Trabalho (CLT)",article:"Art. 58",category:"工作时间",originalLanguage:"pt",originalText:"A duração normal do trabalho, para os empregados em qualquer atividade privada, não excederá de 8 horas diárias, desde que não seja fixado expressamente outro limite.",chineseTranslation:"任何私营活动中雇员的正常工作时间每天不超过8小时，除非另有明确规定。",officialUrl:"https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452.htm",lastUpdated:"2025-05-01",importance:"high",history:[{date:"2017-11-11",change:"劳动改革法生效"},{date:"2025-05-01",change:"确认日8小时/周44小时标准"}]},
-  {id:"br_002",country:"巴西",countryCode:"BR",flag:"🇧🇷",region:"Americas",lawName:"Consolidação das Leis do Trabalho (CLT)",article:"Art. 129-130",category:"休假",subcategory:"年假",originalLanguage:"pt",originalText:"Todo empregado terá direito anualmente ao gozo de um período de férias, sem prejuízo da remuneração. Após cada período de 12 meses, o empregado terá direito a férias de 30 dias corridos.",chineseTranslation:"每位雇员有权享有年度带薪休假。每满12个月的工作期间后，雇员有权享有30个连续日历日的假期。",officialUrl:"https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452.htm",lastUpdated:"2025-05-01",importance:"high",history:[{date:"2017-11-11",change:"允许分三次休年假"},{date:"2025-05-01",change:"确认30天年假+1/3假期奖金"}]},
-  {id:"br_003",country:"巴西",countryCode:"BR",flag:"🇧🇷",region:"Americas",lawName:"Consolidação das Leis do Trabalho (CLT)",article:"Art. 477",category:"入职离职",originalLanguage:"pt",originalText:"É assegurada a todo empregado uma indenização na hipótese de despedida sem justa causa, mediante depósito do FGTS acrescido de multa de 40%.",chineseTranslation:"在无正当理由解雇的情况下，雇员有权获得工龄保障基金(FGTS)存款加40%罚款的赔偿。",officialUrl:"https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452.htm",lastUpdated:"2025-05-01",importance:"high",history:[{date:"2017-11-11",change:"双方协议解除时罚款降至20%"},{date:"2025-05-01",change:"确认无故解雇40%罚款标准"}]},
-
-  // ===== MEXICO =====
-  {id:"mx_001",country:"墨西哥",countryCode:"MX",flag:"🇲🇽",region:"Americas",lawName:"Ley Federal del Trabajo",article:"Art. 61",category:"工作时间",originalLanguage:"es",originalText:"La duración máxima de la jornada será: ocho horas la diurna, siete la nocturna y siete horas y media la mixta.",chineseTranslation:"最长工作时间：日班8小时、夜班7小时、混合班7.5小时。",officialUrl:"https://www.diputados.gob.mx/LeyesBiblio/pdf/LFT.pdf",lastUpdated:"2025-06-01",importance:"high",history:[{date:"2020-01-01",change:"收录工时规定"},{date:"2025-06-01",change:"周休二日改革讨论进行中"}]},
-  {id:"mx_002",country:"墨西哥",countryCode:"MX",flag:"🇲🇽",region:"Americas",lawName:"Ley Federal del Trabajo",article:"Art. 76",category:"休假",subcategory:"年假",originalLanguage:"es",originalText:"Las personas trabajadoras que tengan más de un año de servicios disfrutarán de un período anual de vacaciones pagadas, que en ningún caso podrá ser inferior a doce días laborables.",chineseTranslation:"工龄满一年以上的劳动者享有带薪年假，不得少于12个工作日。",officialUrl:"https://www.diputados.gob.mx/LeyesBiblio/pdf/LFT.pdf",lastUpdated:"2025-06-01",importance:"high",history:[{date:"2023-01-01",change:"年假从6天大幅提高至12天"},{date:"2025-06-01",change:"确认12天最低年假标准"}]},
-  {id:"mx_003",country:"墨西哥",countryCode:"MX",flag:"🇲🇽",region:"Americas",lawName:"Ley Federal del Trabajo",article:"Art. 82-84",category:"工资",originalLanguage:"es",originalText:"Salario es la retribución que debe pagar el patrón al trabajador por su trabajo. El salario mínimo deberá ser suficiente para satisfacer las necesidades normales de un jefe de familia.",chineseTranslation:"工资是雇主因劳动者的工作而应支付的报酬。最低工资应足以满足一家之主的正常需求。",officialUrl:"https://www.diputados.gob.mx/LeyesBiblio/pdf/LFT.pdf",lastUpdated:"2025-06-01",importance:"high",history:[{date:"2024-01-01",change:"最低工资提高至248.93比索/天"},{date:"2025-06-01",change:"2025年最低工资增至278.80比索/天"}]},
-
-  // ===== ARGENTINA =====
-  {id:"ar_001",country:"阿根廷",countryCode:"AR",flag:"🇦🇷",region:"Americas",lawName:"Ley de Contrato de Trabajo N° 20.744",article:"Art. 196",category:"工作时间",originalLanguage:"es",originalText:"La extensión de la jornada de trabajo es uniforme para toda la Nación y se regirá por la ley 11.544, no pudiendo exceder de 8 horas diarias o 48 semanales.",chineseTranslation:"全国统一的工作时间受11.544号法律管辖，每天不超过8小时或每周48小时。",officialUrl:"https://servicios.infoleg.gob.ar/infolegInternet/anexos/25000-29999/25552/texact.htm",lastUpdated:"2025-03-01",importance:"high",history:[{date:"2020-01-01",change:"收录工时规定"},{date:"2025-03-01",change:"确认日8小时/周48小时标准"}]},
-  {id:"ar_002",country:"阿根廷",countryCode:"AR",flag:"🇦🇷",region:"Americas",lawName:"Ley de Contrato de Trabajo N° 20.744",article:"Art. 150",category:"休假",subcategory:"年假",originalLanguage:"es",originalText:"El trabajador gozará de un período mínimo y continuado de descanso anual remunerado de 14 días corridos cuando su antigüedad no exceda de 5 años.",chineseTranslation:"工龄不超过5年的劳动者享有至少14个连续日历日的带薪年假。",officialUrl:"https://servicios.infoleg.gob.ar/infolegInternet/anexos/25000-29999/25552/texact.htm",lastUpdated:"2025-03-01",importance:"medium",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-03-01",change:"满5年21天/满10年28天/满20年35天"}]},
-  {id:"ar_003",country:"阿根廷",countryCode:"AR",flag:"🇦🇷",region:"Americas",lawName:"Ley de Contrato de Trabajo N° 20.744",article:"Art. 245",category:"入职离职",originalLanguage:"es",originalText:"En los casos de despido dispuesto por el patrón sin justa causa, habiendo o no mediado preaviso, éste deberá abonar al trabajador una indemnización equivalente a un mes de sueldo por cada año de servicio.",chineseTranslation:"在雇主无正当理由解雇的情况下，无论是否提前通知，雇主应向劳动者支付相当于每服务一年一个月工资的赔偿。",officialUrl:"https://servicios.infoleg.gob.ar/infolegInternet/anexos/25000-29999/25552/texact.htm",lastUpdated:"2025-03-01",importance:"high",history:[{date:"2020-01-01",change:"收录解雇赔偿规定"},{date:"2025-03-01",change:"赔偿上限仍为月工资的3倍"}]},
-
-  // ===== SOUTH AFRICA =====
-  {id:"za_001",country:"南非",countryCode:"ZA",flag:"🇿🇦",region:"Africa",lawName:"Basic Conditions of Employment Act (BCEA)",article:"Section 9",category:"工作时间",originalLanguage:"en",originalText:"An employer may not require or permit an employee to work more than 45 hours in any week, or nine hours in any day if the employee works for five days or fewer in a week.",chineseTranslation:"雇主不得要求或允许雇员每周工作超过45小时，每周工作5天或以下的每天不超过9小时。",officialUrl:"https://www.labour.gov.za/legislation/acts/basic-conditions-of-employment",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2020-01-01",change:"收录BCEA工时规定"},{date:"2025-04-01",change:"确认45小时/周标准有效"}]},
-  {id:"za_002",country:"南非",countryCode:"ZA",flag:"🇿🇦",region:"Africa",lawName:"Basic Conditions of Employment Act (BCEA)",article:"Section 20",category:"休假",subcategory:"年假",originalLanguage:"en",originalText:"An employee is entitled to 21 consecutive days' annual leave on full remuneration, in respect of each annual leave cycle.",chineseTranslation:"雇员有权在每个年假周期内享有21个连续日历日的全薪年假。",officialUrl:"https://www.labour.gov.za/legislation/acts/basic-conditions-of-employment",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-04-01",change:"确认21天/15个工作日标准"}]},
-  {id:"za_003",country:"南非",countryCode:"ZA",flag:"🇿🇦",region:"Africa",lawName:"Labour Relations Act",article:"Section 189",category:"入职离职",originalLanguage:"en",originalText:"When an employer contemplates dismissing one or more employees for reasons based on the employer's operational requirements, the employer must consult with the relevant parties.",chineseTranslation:"当雇主因经营需要考虑解雇一名或多名雇员时，必须与相关各方协商。",officialUrl:"https://www.labour.gov.za/legislation/acts/labour-relations",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2020-01-01",change:"收录经营性裁员程序"},{date:"2025-04-01",change:"协商程序强制性确认"}]},
-
-  // ===== NIGERIA =====
-  {id:"ng_001",country:"尼日利亚",countryCode:"NG",flag:"🇳🇬",region:"Africa",lawName:"Labour Act Cap L1 LFN 2004",article:"Section 13",category:"工作时间",originalLanguage:"en",originalText:"The normal hours of work of an employee shall be as fixed by mutual agreement or by collective bargaining, but shall not exceed the maximum hours of work.",chineseTranslation:"雇员的正常工作时间由双方协议或集体谈判确定，但不得超过法定最高工时。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=43311",lastUpdated:"2025-01-01",importance:"medium",history:[{date:"2020-01-01",change:"收录工时规定"},{date:"2025-01-01",change:"通常为每天8小时/每周40小时"}]},
-  {id:"ng_002",country:"尼日利亚",countryCode:"NG",flag:"🇳🇬",region:"Africa",lawName:"Labour Act Cap L1 LFN 2004",article:"Section 18",category:"休假",subcategory:"年假",originalLanguage:"en",originalText:"Every worker shall be entitled to at least six working days of holiday with full pay after twelve months of continuous service.",chineseTranslation:"每位连续服务满12个月的劳动者有权享有至少6个工作日的带薪年假。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=43311",lastUpdated:"2025-01-01",importance:"medium",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-01-01",change:"确认最低6天年假（实际通常更多）"}]},
-  {id:"ng_003",country:"尼日利亚",countryCode:"NG",flag:"🇳🇬",region:"Africa",lawName:"National Minimum Wage (Amendment) Act 2024",article:"Section 2",category:"工资",originalLanguage:"en",originalText:"The national minimum wage shall be reviewed every five years or as the need arises. The current minimum wage is set at 70,000 Naira per month.",chineseTranslation:"国家最低工资应每五年或在需要时进行审查。当前最低工资定为每月70,000奈拉。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=43311",lastUpdated:"2025-01-01",importance:"high",history:[{date:"2019-04-18",change:"最低工资从18,000提高至30,000奈拉"},{date:"2025-01-01",change:"2024年提高至70,000奈拉/月"}]},
-
-  // ===== GHANA =====
-  {id:"gh_001",country:"加纳",countryCode:"GH",flag:"🇬🇭",region:"Africa",lawName:"Labour Act 2003 (Act 651)",article:"Section 33",category:"工作时间",originalLanguage:"en",originalText:"The hours of work of a worker shall be a maximum of eight hours a day or forty hours a week except in cases expressly provided for in this Act.",chineseTranslation:"劳动者的工作时间最多为每天8小时或每周40小时，除非本法另有明确规定。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=67401",lastUpdated:"2025-02-01",importance:"high",history:[{date:"2020-01-01",change:"收录工时规定"},{date:"2025-02-01",change:"确认40小时/周标准"}]},
-  {id:"gh_002",country:"加纳",countryCode:"GH",flag:"🇬🇭",region:"Africa",lawName:"Labour Act 2003 (Act 651)",article:"Section 20",category:"休假",subcategory:"年假",originalLanguage:"en",originalText:"A worker is entitled to a minimum of fifteen working days leave with full pay in any calendar year of continuous service.",chineseTranslation:"劳动者在连续服务的任何日历年中有权享有至少15个工作日的全薪假期。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=67401",lastUpdated:"2025-02-01",importance:"medium",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-02-01",change:"确认最低15天标准"}]},
-  {id:"gh_003",country:"加纳",countryCode:"GH",flag:"🇬🇭",region:"Africa",lawName:"Labour Act 2003 (Act 651)",article:"Section 63",category:"劳动合同",originalLanguage:"en",originalText:"A contract of employment shall express in clear terms the rights and obligations of the parties and shall include the remuneration, hours of work, and other conditions.",chineseTranslation:"劳动合同应清楚表述双方的权利和义务，包括报酬、工作时间及其他条件。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=67401",lastUpdated:"2025-02-01",importance:"medium",history:[{date:"2020-01-01",change:"收录合同要求"},{date:"2025-02-01",change:"确认书面合同义务"}]},
-
-  // ===== TANZANIA =====
-  {id:"tz_001",country:"坦桑尼亚",countryCode:"TZ",flag:"🇹🇿",region:"Africa",lawName:"Employment and Labour Relations Act 2004",article:"Section 19",category:"工作时间",originalLanguage:"en",originalText:"An employee shall not be required to work more than forty-five hours per week excluding meal intervals.",chineseTranslation:"雇员每周工作时间（不含用餐间隔）不得超过45小时。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=68319",lastUpdated:"2025-01-01",importance:"medium",history:[{date:"2020-01-01",change:"收录工时规定"},{date:"2025-01-01",change:"确认45小时/周标准"}]},
-  {id:"tz_002",country:"坦桑尼亚",countryCode:"TZ",flag:"🇹🇿",region:"Africa",lawName:"Employment and Labour Relations Act 2004",article:"Section 31",category:"休假",subcategory:"年假",originalLanguage:"en",originalText:"An employee is entitled to at least twenty-eight consecutive days' leave on full remuneration in respect of each leave cycle.",chineseTranslation:"雇员在每个休假周期内有权享有至少28个连续日历日的全薪假期。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=68319",lastUpdated:"2025-01-01",importance:"medium",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-01-01",change:"确认28天年假标准"}]},
-  {id:"tz_003",country:"坦桑尼亚",countryCode:"TZ",flag:"🇹🇿",region:"Africa",lawName:"Employment and Labour Relations Act 2004",article:"Section 37",category:"入职离职",originalLanguage:"en",originalText:"An employer shall not terminate employment unless there is a valid reason connected with the capacity or conduct of the employee or based on the operational requirements.",chineseTranslation:"雇主不得解雇雇员，除非有与雇员能力或行为相关的正当理由或基于经营需要。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=68319",lastUpdated:"2025-01-01",importance:"high",history:[{date:"2020-01-01",change:"收录解雇限制"},{date:"2025-01-01",change:"确认正当理由解雇原则"}]},
-
-  // ===== EGYPT =====
-  {id:"eg_001",country:"埃及",countryCode:"EG",flag:"🇪🇬",region:"Africa",lawName:"قانون العمل (Labor Law No. 12/2003)",article:"المادة 80",category:"工作时间",originalLanguage:"ar",originalText:"لا يجوز تشغيل العامل تشغيلا فعليا أكثر من ثمان ساعات فى اليوم أو ثمان وأربعين ساعة فى الأسبوع",chineseTranslation:"不得使劳动者实际工作每天超过8小时或每周超过48小时。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=64693",lastUpdated:"2025-03-01",importance:"high",history:[{date:"2020-01-01",change:"收录工时规定"},{date:"2025-03-01",change:"新劳动法草案讨论中"}]},
-  {id:"eg_002",country:"埃及",countryCode:"EG",flag:"🇪🇬",region:"Africa",lawName:"قانون العمل (Labor Law No. 12/2003)",article:"المادة 47",category:"休假",subcategory:"年假",originalLanguage:"ar",originalText:"يستحق العامل إجازة سنوية بأجر كامل لا تقل عن واحد وعشرين يوما بعد مضى سنة من تاريخ التعيين",chineseTranslation:"劳动者自任职之日起满一年后，有权享有不少于21天的全薪年假。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=64693",lastUpdated:"2025-03-01",importance:"medium",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-03-01",change:"满10年或50岁以上为30天"}]},
-  {id:"eg_003",country:"埃及",countryCode:"EG",flag:"🇪🇬",region:"Africa",lawName:"قانون التأمينات الاجتماعية (Social Insurance Law No. 148/2019)",article:"المادة 19",category:"社保规定",originalLanguage:"ar",originalText:"تتحمل المنشأة حصة في اشتراكات التأمينات الاجتماعية بنسبة لا تتجاوز الحدود المقررة قانونا",chineseTranslation:"企业承担社会保险缴费份额，比例不超过法律规定的上限。",officialUrl:"https://www.ilo.org/dyn/natlex/natlex4.detail?p_isn=64693",lastUpdated:"2025-03-01",importance:"high",history:[{date:"2020-01-01",change:"2019年社保法实施"},{date:"2025-03-01",change:"雇主缴费率约18.75%"}]},
-
-  // ===== AUSTRALIA =====
-  {id:"au_001",country:"澳大利亚",countryCode:"AU",flag:"🇦🇺",region:"Oceania",lawName:"Fair Work Act 2009",article:"Section 62",category:"工作时间",originalLanguage:"en",originalText:"An employer must not request or require an employee to work more than 38 hours in a week unless the additional hours are reasonable.",chineseTranslation:"雇主不得要求或请求雇员每周工作超过38小时，除非额外工时是合理的。",officialUrl:"https://www.legislation.gov.au/Details/C2017C00323",lastUpdated:"2025-07-01",importance:"high",history:[{date:"2020-01-01",change:"收录NES标准工时"},{date:"2025-07-01",change:"拒绝不合理加班权利加强"}]},
-  {id:"au_002",country:"澳大利亚",countryCode:"AU",flag:"🇦🇺",region:"Oceania",lawName:"Fair Work Act 2009",article:"Section 87",category:"休假",subcategory:"年假",originalLanguage:"en",originalText:"For each year of service with his or her employer, an employee is entitled to 4 weeks of paid annual leave.",chineseTranslation:"雇员每服务一年，有权享有4周的带薪年假。",officialUrl:"https://www.legislation.gov.au/Details/C2017C00323",lastUpdated:"2025-07-01",importance:"high",history:[{date:"2020-01-01",change:"收录NES年假规定"},{date:"2025-07-01",change:"轮班制工人为5周年假"}]},
-  {id:"au_003",country:"澳大利亚",countryCode:"AU",flag:"🇦🇺",region:"Oceania",lawName:"Fair Work Act 2009",article:"Section 117",category:"入职离职",originalLanguage:"en",originalText:"An employer must not terminate an employee's employment unless the employer has given the employee written notice of the day of the termination as prescribed.",chineseTranslation:"雇主不得终止雇员的雇佣关系，除非已按规定向雇员发出书面终止通知。",officialUrl:"https://www.legislation.gov.au/Details/C2017C00323",lastUpdated:"2025-07-01",importance:"high",history:[{date:"2020-01-01",change:"收录解雇通知规定"},{date:"2025-07-01",change:"通知期1-4周按服务年限"}]},
-
-  // ===== NEW ZEALAND =====
-  {id:"nz_001",country:"新西兰",countryCode:"NZ",flag:"🇳🇿",region:"Oceania",lawName:"Employment Relations Act 2000",article:"Section 65",category:"劳动合同",originalLanguage:"en",originalText:"An individual employment agreement must be in writing and must contain a description of the work to be performed, an indication of where the employee is to perform the work, and the agreed hours of work.",chineseTranslation:"个人雇佣协议必须以书面形式订立，须包含工作描述、工作地点和约定的工作时间。",officialUrl:"https://www.legislation.govt.nz/act/public/2000/0024/latest/DLM58317.html",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2020-01-01",change:"收录书面合同义务"},{date:"2025-04-01",change:"增加弹性工作安排讨论义务"}]},
-  {id:"nz_002",country:"新西兰",countryCode:"NZ",flag:"🇳🇿",region:"Oceania",lawName:"Holidays Act 2003",article:"Section 16",category:"休假",subcategory:"年假",originalLanguage:"en",originalText:"After the end of each completed 12 months of continuous employment, an employee is entitled to not less than 4 weeks' paid annual holidays.",chineseTranslation:"每满12个月连续雇佣后，雇员有权享有不少于4周的带薪年假。",officialUrl:"https://www.legislation.govt.nz/act/public/2003/0129/latest/DLM236386.html",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2020-01-01",change:"收录年假规定"},{date:"2025-04-01",change:"确认4周最低年假"}]},
-  {id:"nz_003",country:"新西兰",countryCode:"NZ",flag:"🇳🇿",region:"Oceania",lawName:"Minimum Wage Act 1983",article:"Section 4",category:"工资",originalLanguage:"en",originalText:"Every worker who is not a worker to whom a training minimum wage applies is entitled to receive from their employer payment for their work at not less than the minimum adult rate.",chineseTranslation:"每位非培训工资适用的劳动者有权从雇主处获得不低于成人最低工资标准的报酬。",officialUrl:"https://www.legislation.govt.nz/act/public/1983/0115/latest/DLM74093.html",lastUpdated:"2025-04-01",importance:"high",history:[{date:"2024-04-01",change:"最低工资提高至23.15新西兰元/小时"},{date:"2025-04-01",change:"2025年最低工资提高至23.50新西兰元/小时"}]},
-
-  // ===== 离职结算 =====
-  {id:"jp_005",country:"日本",countryCode:"JP",flag:"🇯🇵",region:"Asia",lawName:"労働基準法 (Labor Standards Act)",article:"第8条",category:"离职结算",originalLanguage:"ja",originalText:"使用者は、労働者が退職した場合において、当該労働者の請求に応じ、遅滞なく賃金を支払わなければならない。",chineseTranslation:"雇主在劳动者退职时，应根据劳动者的请求及时支付工资。退职时的结算方法按政令规定办理。",officialUrl:"https://laws.e-gov.go.jp/law/s22bo049/020000000000089000",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录退职结算规定"},{date:"2026-05-28",change:"确认退职金支付义务"}]},
-  {id:"jp_006",country:"日本",countryCode:"JP",flag:"🇯🇵",region:"Asia",lawName:"中小企業退職金共済法 (Small and Medium Enterprise Retirement Allowance Mutual Aid Act)",article:"第1条",category:"离职结算",originalLanguage:"ja",originalText:"中小企業の労働者の退職金の支払を確保するため、中小企業退職金共済事業について規定する。",chineseTranslation:"为确保中小企业劳动者的退职金支付，对中小企业退职金共济事业作出规定。",officialUrl:"https://www.chuikyo.or.jp/",lastUpdated:"2026-05-28",importance:"medium",history:[{date:"2020-01-01",change:"收录退职金共济制度"},{date:"2026-05-28",change:"确认制度继续有效"}]},
-  {id:"kr_005",country:"韩国",countryCode:"KR",flag:"🇰🇷",region:"Asia",lawName:"근로기준법 (Labor Standards Act)",article:"제8조",category:"离职结算",originalLanguage:"ko",originalText:"사용자는 근로자가 사망 또는 퇴직한 경우에는 그 지급사유가 발생한 때부터 14일 이내에 임금, 보상금, 그 밖에 일체의 금품을 지급하여야 한다.",chineseTranslation:"雇主在劳动者死亡或退职时，须自退职之日起14天内支付工资、补偿金及其他一切款项。",officialUrl:"https://www.law.go.kr/법령/근로기준법",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录退职结算时限"},{date:"2026-05-28",change:"确认14天内结算义务"}]},
-  {id:"kr_006",country:"韩国",countryCode:"KR",flag:"🇰🇷",region:"Asia",lawName:"고용보험법 (Employment Insurance Act)",article:"제38조",category:"离职结算",originalLanguage:"ko",originalText:"피보험자가 실직한 경우에 대통령령으로 정하는 수당을 지급한다.",chineseTranslation:"当被保险者失业时，按总统令规定支付津贴。失业原因等导致的支付详细标准按总统令规定办理。",officialUrl:"https://www.law.go.kr/법령/고용보험법",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录失业津贴规定"},{date:"2026-05-28",change:"确认雇佣保险制度"}]},
-  {id:"de_005",country:"德国",countryCode:"DE",flag:"🇩🇪",region:"Europe",lawName:"Bürgerliches Gesetzbuch (Civil Code)",article:"§9",category:"离职结算",originalLanguage:"de",originalText:"Hat der Arbeitgeber das Arbeitsverhältnis gekündigt, so kann der Arbeitnehmer eine Abfindung verlangen, wenn ein Betriebsrat besteht und der Arbeitnehmer das 40. Lebensjahr vollendet hat und das Arbeitsverhältnis mindestens 15 Jahre bestanden hat.",chineseTranslation:"如雇主解雇劳动关系，当存在企业委员会、劳动者已满40岁且劳动关系至少存在15年时，劳动者可以要求遣散费。",officialUrl:"https://www.gesetze-im-internet.de/bgb/__9.html",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录遣散费请求权"},{date:"2026-05-28",change:"确认遣散费条件"}]},
-  {id:"de_006",country:"德国",countryCode:"DE",flag:"🇩🇪",region:"Europe",lawName:"Kündigungsschutzgesetz (Protection Against Dismissal Act)",article:"§1",category:"离职结算",originalLanguage:"de",originalText:"Wird ein Arbeitnehmer entgegen § 102 BetrVG ohne Anhörung des Betriebsrats gekündigt, so ist die Kündigung unwirksam.",chineseTranslation:"如雇主未听取企业委员会意见而解雇雇员，该解雇无效。雇主须在解雇前听取企业委员会意见。",officialUrl:"https://www.gesetze-im-internet.de/kschg/BJNR002750969.html",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录企业委员会听证要求"},{date:"2026-05-28",change:"确认程序性保护"}]},
-  {id:"fr_005",country:"法国",countryCode:"FR",flag:"🇫🇷",region:"Europe",lawName:"Code du travail (Labor Code)",article:"L1234-9",category:"离职结算",originalLanguage:"fr",originalText:"Le salarié licencié a droit à une indemnité de licenciement dont le montant est fixé par la convention collective applicable ou, à défaut, par les dispositions du présent article.",chineseTranslation:"被解雇的雇员有权获得解雇补偿金，其金额由适用的集体协议规定，或在无集体协议的情况下，由本条规定确定。",officialUrl:"https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006902702",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录解雇补偿金权利"},{date:"2026-05-28",change:"确认补偿金计算标准"}]},
-  {id:"fr_006",country:"法国",countryCode:"FR",flag:"🇫🇷",region:"Europe",lawName:"Code du travail (Labor Code)",article:"R1234-1",category:"离职结算",originalLanguage:"fr",originalText:"Pour les salariés ayant une ancienneté d'au moins huit mois dans une entreprise employant au moins onze salariés, l'indemnité prévue à l'article L. 1234-9 ne peut être inférieure à un quart de mois de salaire par année d'ancienneté.",chineseTranslation:"对于在雇用至少11名员工的企业中拥有至少8个月工龄的雇员，L.1234-9条规定的补偿金不得低于按工龄计算的四分之一月薪。",officialUrl:"https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006902703",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录最低补偿金标准"},{date:"2026-05-28",change:"确认计算公式"}]},
-  {id:"uk_005",country:"英国",countryCode:"GB",flag:"🇬🇧",region:"Europe",lawName:"Employment Rights Act 1996",article:"Section 135",category:"离职结算",originalLanguage:"en",originalText:"An employee who is dismissed by reason of redundancy is entitled to a redundancy payment if he has been continuously employed for not less than two years.",chineseTranslation:"因冗余被解雇的雇员，如连续受雇不少于两年，有权获得遣散费。",officialUrl:"https://www.legislation.gov.uk/ukpga/1996/18/part/XI",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录遣散费领取资格"},{date:"2026-05-28",change:"确认两年任职要求"}]},
-  {id:"uk_006",country:"英国",countryCode:"GB",flag:"🇬🇧",region:"Europe",lawName:"Employment Rights Act 1996",article:"Section 136",category:"离职结算",originalLanguage:"en",originalText:"The amount of a redundancy payment is calculated by reference to the employee's age, weekly pay and length of continuous employment.",chineseTranslation:"遣散费的金额根据雇员的年龄、周薪和连续受雇时间计算。",officialUrl:"https://www.legislation.gov.uk/ukpga/1996/18/part/XI",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录遣散费计算方法"},{date:"2026-05-28",change:"确认计算公式"}]},
-  {id:"sg_005",country:"新加坡",countryCode:"SG",flag:"🇸🇬",region:"Asia",lawName:"Employment Act",article:"Section 10",category:"离职结算",originalLanguage:"en",originalText:"An employee who is dismissed for redundancy or by reason of restructuring of the employer's business shall be entitled to retrenchment benefits or ex-gratia payment as may be agreed upon.",chineseTranslation:"因冗余或雇主业务重组而被解雇的雇员，有权获得裁员福利或酌情支付。",officialUrl:"https://www.mom.gov.sg/employment-practices/termination-and-retrenchment",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录裁员福利规定"},{date:"2026-05-28",change:"确认裁员补偿标准"}]},
-  {id:"sg_006",country:"新加坡",countryCode:"SG",flag:"🇸🇬",region:"Asia",lawName:"Central Provident Fund Act",article:"Section 19",category:"离职结算",originalLanguage:"en",originalText:"A member who has ceased employment may withdraw his CPF savings subject to the conditions and limits set out in the Third Schedule.",chineseTranslation:"已停止就业的会员可按第三附表规定的条件和限额提取其公积金储蓄。",officialUrl:"https://www.cpf.gov.sg/",lastUpdated:"2026-05-28",importance:"high",history:[{date:"2020-01-01",change:"收录公积金提取规定"},{date:"2026-05-28",change:"确认停止就业后提取条件"}]}
-];
-
-// ============ AI MOCK DATA ============
-const aiMonitorData = [
-  {country:'日本',flag:'🇯🇵',region:'Asia',title:'最低工资标准上调',date:'2026-06-15',effective:'2026-10-01',summary:'日本厚生劳动省宣布2026年度最低工资标准上调至时薪1,100日元，全国平均涨幅约4.2%。影响所有雇佣最低工资劳动者的雇主。',impact:'high',modules:['薪酬','社保'],recommendation:'建议尽快调整薪酬系统，确保10月前完成最低工资合规更新。'},
-  {country:'德国',flag:'🇩🇪',region:'Europe',title:'数字化工作时间记录法规生效',date:'2026-06-01',effective:'2026-07-01',summary:'德国联邦劳动法院裁定所有雇主必须实施数字化工作时间记录系统，取代传统纸质打卡。',impact:'high',modules:['工时','合规'],recommendation:'需要在7月前部署数字考勤系统，建议采用云端解决方案。'},
-  {country:'新加坡',flag:'🇸🇬',region:'Asia',title:'公积金缴费率调整',date:'2026-05-20',effective:'2026-07-01',summary:'新加坡中央公积金局宣布55岁以下员工雇主缴费率从17%上调至18%，以加强退休保障。',impact:'medium',modules:['社保','薪酬'],recommendation:'更新薪资计算系统，预留额外1%的社保成本预算。'},
-  {country:'法国',flag:'🇫🇷',region:'Europe',title:'远程工作权利扩展',date:'2026-05-10',effective:'2026-09-01',summary:'法国劳动法修正案将远程工作权利扩展至50人以上企业所有符合条件的员工，每周至少3天远程。',impact:'medium',modules:['合规','员工关系'],recommendation:'更新远程工作政策，建立混合办公审批流程。'},
-  {country:'巴西',flag:'🇧🇷',region:'Americas',title:'数字劳动者权益保护法',date:'2026-05-01',effective:'2026-08-01',summary:'巴西通过新法保护平台经济数字劳动者权益，要求网约车、外卖等平台提供社保和职业安全保障。',impact:'high',modules:['社保','合规'],recommendation:'评估平台合作模式下的合规风险，更新外包协议条款。'},
-  {country:'澳大利亚',flag:'🇦🇺',region:'Oceania',title:'同工同酬审计要求升级',date:'2026-04-15',effective:'2026-07-01',summary:'澳大利亚公平工作法案修订，要求100人以上企业每年进行性别薪酬差距审计并公开报告。',impact:'medium',modules:['薪酬','合规'],recommendation:'启动薪酬公平性内部审计，准备年度报告模板。'},
-  {country:'韩国',flag:'🇰🇷',region:'Asia',title:'产假延长至120天',date:'2026-04-01',effective:'2026-07-01',summary:'韩国修订劳动基准法，将产假从90天延长至120天，其中90天由雇主全额支付。',impact:'high',modules:['休假','薪酬'],recommendation:'更新休假管理制度，调整产假期间薪资支付方案。'},
-  {country:'墨西哥',flag:'🇲🇽',region:'Americas',title:'外包用工限制加强',date:'2026-03-20',effective:'2026-06-01',summary:'墨西哥劳动法修正案进一步限制外包用工，禁止核心业务岗位使用外包，违规罚款大幅提高。',impact:'high',modules:['合规','招聘'],recommendation:'审查现有外包合同，识别核心业务岗位并制定转正计划。'},
-  {country:'南非',flag:'🇿🇦',region:'Africa',title:'最低工资调整',date:'2026-03-01',effective:'2026-03-01',summary:'南非最低工资委员会宣布将最低工资从每小时25.42兰特上调至27.58兰特，涨幅约8.5%。',impact:'medium',modules:['薪酬'],recommendation:'更新薪资系统中的最低工资标准。'},
-  {country:'荷兰',flag:'🇳🇱',region:'Europe',title:'零工经济劳动者保护',date:'2026-02-15',effective:'2026-06-01',summary:'荷兰通过零工经济法案，要求平台为连续工作12个月以上的零工提供正式雇佣合同。',impact:'medium',modules:['合规','入职离职'],recommendation:'评估零工用工模式，对符合条件者提供正式合同。'},
-  {country:'印度',flag:'🇮🇳',region:'Asia',title:'社会保障码实施细则更新',date:'2026-02-01',effective:'2026-05-01',summary:'印度政府发布社会保障码实施细则，统一养老金、公积金和工伤保险的缴费和管理流程。',impact:'medium',modules:['社保','合规'],recommendation:'了解新实施细则的具体要求，更新印度区域的社保缴纳流程。'},
-  {country:'加拿大',flag:'🇨🇦',region:'Americas',title:'联邦带薪病假法案',date:'2026-01-15',effective:'2026-04-01',summary:'加拿大联邦政府通过带薪病假法案，要求联邦管辖雇主为员工提供每年10天带薪病假。',impact:'high',modules:['休假','薪酬'],recommendation:'更新休假政策，确保联邦管辖员工享有10天带薪病假。'}
-];
-
-// ============ THEME ============
-function getTheme() { return localStorage.getItem('theme') || 'dark'; }
-function setTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-  localStorage.setItem('theme', t);
-  document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+// ============ DROPDOWN / THEME / LANG ============
+function toggleDD(id) {
+  document.querySelectorAll('.dd-menu').forEach(m => { if(m.id !== id) m.classList.remove('open'); });
+  document.getElementById(id).classList.toggle('open');
 }
-function toggleTheme() { setTheme(getTheme() === 'dark' ? 'light' : 'dark'); }
+document.addEventListener('click', e => { if(!e.target.closest('.dd-wrap')) document.querySelectorAll('.dd-menu').forEach(m=>m.classList.remove('open')); });
+
+function getTheme(){ return localStorage.getItem('hr_theme') || 'dark'; }
+function setTheme(t){ document.documentElement.setAttribute('data-theme',t); localStorage.setItem('hr_theme',t); document.getElementById('themeBtn').textContent = t==='dark'?'☀️':'🌙'; }
+function toggleTheme(){ setTheme(getTheme()==='dark'?'light':'dark'); if(scene)renderGlobe(); }
 setTheme(getTheme());
 
-// ============ I18N ============
-let currentLang = 'zh';
-const i18n = {
-  zh: { title:'全球劳动法汇总系统 v2.0', search:'搜索', searchPlaceholder:'搜索法规...', filterRegion:'地区', filterCountry:'国家', filterCategory:'类别', sort:'排序', all:'全部', results:'显示 {n} 条结果', worldMap:'世界地图', chartTitle:'各地区法规数量', compare:'对比', export:'导出', copyJson:'复制JSON', print:'打印/PDF', settings:'设置', save:'保存', close:'关闭', originalText:'原文', translation:'中文翻译', history:'变更历史', viewOfficial:'查看官方', aiTranslate:'AI翻译', translateBtn:'翻译', translating:'翻译中...', noKey:'未设置API Key', sortCountry:'按国家', sortDate:'按更新日期', statLaws:'法规', statCountries:'个国家', statCategories:'大类别', statLastUpdate:'最后更新', selectCountries:'选择对比国家：' },
-  en: { title:'Global Labor Law System v2.0', search:'Search', searchPlaceholder:'Search laws...', filterRegion:'Region', filterCountry:'Country', filterCategory:'Category', sort:'Sort', all:'All', results:'{n} results', worldMap:'World Map', chartTitle:'Laws by Region', compare:'Compare', export:'Export', copyJson:'Copy JSON', print:'Print/PDF', settings:'Settings', save:'Save', close:'Close', originalText:'Original', translation:'Translation', history:'History', viewOfficial:'Official', aiTranslate:'AI Translate', translateBtn:'Translate', translating:'Translating...', noKey:'No API Key', sortCountry:'By Country', sortDate:'By Date', statLaws:'Laws', statCountries:'Countries', statCategories:'Categories', statLastUpdate:'Updated', selectCountries:'Compare:' },
-  ja: { title:'世界労働法システム v2.0', search:'検索', searchPlaceholder:'法律を検索...', filterRegion:'地域', filterCountry:'国', filterCategory:'カテゴリ', sort:'並べ替え', all:'すべて', results:'{n}件', worldMap:'世界地図', chartTitle:'地域別法律数', compare:'比較', export:'エクスポート', copyJson:'JSONコピー', print:'印刷/PDF', settings:'設定', save:'保存', close:'閉じる', originalText:'原文', translation:'翻訳', history:'履歴', viewOfficial:'公式', aiTranslate:'AI翻訳', translateBtn:'翻訳', translating:'翻訳中...', noKey:'APIキー未設定', sortCountry:'国別', sortDate:'日付順', statLaws:'法律', statCountries:'国', statCategories:'カテゴリ', statLastUpdate:'更新', selectCountries:'比較:' }
-};
-function t(key) { return (i18n[currentLang] || i18n.zh)[key] || key; }
-function cycleLang() { currentLang = currentLang === 'zh' ? 'en' : currentLang === 'en' ? 'ja' : 'zh'; document.getElementById('langBtn').textContent = {zh:'中文',en:'English',ja:'日本語'}[currentLang]; applyFilters(); updateLabels(); }
-function updateLabels() {
+function switchLang(lang){
+  currentLang = lang;
+  localStorage.setItem('hr_lang', lang);
+  document.getElementById('langBtn').textContent = {zh:'🌐 中文',en:'🌐 English',es:'🌐 Español'}[lang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
-    if (el.placeholder !== undefined) el.placeholder = t(k);
-    else el.textContent = t(k).replace('{n}', document.getElementById('resultCount').dataset.n || '0');
+    el.textContent = t(k);
   });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
+  });
+  document.getElementById('settingsLang').value = lang;
+  applyFilters(); renderTimeline(); renderNotifications(); renderTree(); renderRightPanel(); renderHeroChips();
+  document.querySelectorAll('.dd-menu').forEach(m=>m.classList.remove('open'));
 }
+// Init lang
+document.getElementById('langBtn').textContent = {zh:'🌐 中文',en:'🌐 English',es:'🌐 Español'}[currentLang];
+document.getElementById('settingsLang').value = currentLang;
+
+// ============ DATA ============
+const laborLawData = [
+  {id:"sg_001",country:"Singapore",countryCode:"SG",flag:"🇸🇬",region:"Asia",lawName:"Employment Act",article:"Part IV, S38",category:"工作时间",importance:"high",originalText:"Maximum working hours: 8h/day, 44h/week.",chineseTranslation:"最长工作时间：每天8小时，每周44小时。",lastUpdated:"2025-06-01",effectiveDate:"2025-06-01",history:[{date:"2024-04-01",change:"引入4天工作周试点"},{date:"2023-01-01",change:"调整加班费率"},{date:"2022-04-01",change:"扩大覆盖范围"}],officialUrl:"https://sso.agc.gov.sg"},
+  {id:"sg_002",country:"Singapore",countryCode:"SG",flag:"🇸🇬",region:"Asia",lawName:"Employment Act",article:"Part IX, S88",category:"休假",importance:"medium",originalText:"Paid sick leave: 14 days outpatient + 60 days hospitalization.",chineseTranslation:"带薪病假：14天门诊 + 60天住院。",lastUpdated:"2025-05-15",effectiveDate:"2025-06-01",history:[{date:"2024-01-01",change:"增加心理健康病假"}],officialUrl:"https://sso.agc.gov.sg"},
+  {id:"sg_003",country:"Singapore",countryCode:"SG",flag:"🇸🇬",region:"Asia",lawName:"Central Provident Fund Act",article:"S27",category:"社保规定",importance:"high",originalText:"Employee CPF: 20%, Employer CPF: 17%.",chineseTranslation:"员工CPF缴费：20%，雇主CPF缴费：17%。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2024-01-01",change:"上调缴费比例"},{date:"2023-01-01",change:"调整分配比例"}],officialUrl:"https://www.cpf.gov.sg"},
+  {id:"my_001",country:"Malaysia",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"Employment Act 1955",article:"S60A",category:"工作时间",importance:"high",originalText:"Normal hours: 8h/day, 45h/week. OT rate: 1.5x.",chineseTranslation:"正常工时：每天8小时，每周45小时。加班费率：1.5倍。",lastUpdated:"2025-07-01",effectiveDate:"2025-07-01",history:[{date:"2025-01-01",change:"每周工时从45降至40小时"},{date:"2023-01-01",change:"扩大EA覆盖范围"}],officialUrl:"https://www.dosh.gov.my"},
+  {id:"my_002",country:"Malaysia",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"EPF Act 1991",article:"S43",category:"社保规定",importance:"high",originalText:"EPF contribution: Employee 11%, Employer varies (12-19%).",chineseTranslation:"EPF缴费：员工11%，雇主12-19%。",lastUpdated:"2025-06-15",effectiveDate:"2025-07-01",history:[{date:"2024-01-01",change:"调整雇主缴费率"}],officialUrl:"https://www.kwsp.gov.my"},
+  {id:"my_003",country:"Malaysia",countryCode:"MY",flag:"🇲🇾",region:"Asia",lawName:"Employment Act 1955",article:"S60",category:"休假",importance:"medium",originalText:"Annual leave: 8-16 days based on service years.",chineseTranslation:"年假：根据工龄8-16天。",lastUpdated:"2025-03-01",effectiveDate:"2025-03-01",history:[{date:"2023-01-01",change:"增加陪产假至7天"}],officialUrl:"https://www.dosh.gov.my"},
+  {id:"th_001",country:"Thailand",countryCode:"TH",flag:"🇹🇭",region:"Asia",lawName:"Labor Protection Act",article:"S54",category:"工作时间",importance:"high",originalText:"Max 8h/day, not exceeding 40h/week. Rest day required.",chineseTranslation:"最长8小时/天，不超过40小时/周。必须有休息日。",lastUpdated:"2025-05-20",effectiveDate:"2025-06-01",history:[{date:"2024-01-01",change:"调整最低工资标准"},{date:"2022-06-01",change:"修改加班规定"}],officialUrl:"https://www.labor.go.th"},
+  {id:"th_002",country:"Thailand",countryCode:"TH",flag:"🇹🇭",region:"Asia",lawName:"Social Security Act",article:"S33",category:"社保规定",importance:"medium",originalText:"SSO contribution: 5% each (employee & employer), capped.",chineseTranslation:"社保缴费：员工和雇主各5%，有上限。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"调整缴费基数上限"}],officialUrl:"https://www.sso.go.th"},
+  {id:"th_003",country:"Thailand",countryCode:"TH",flag:"🇹🇭",region:"Asia",lawName:"Labor Protection Act",article:"S30",category:"休假",importance:"high",originalText:"Annual leave: min 6 days after 1 year. Public holidays: 13 days.",chineseTranslation:"年假：满1年最少6天。法定假日：13天。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2024-01-01",change:"新增家庭日假期"}],officialUrl:"https://www.labor.go.th"},
+  {id:"vn_001",country:"Vietnam",countryCode:"VN",flag:"🇻🇳",region:"Asia",lawName:"Labor Code 2019",article:"S105",category:"休假",importance:"high",originalText:"Annual leave: 12 days/year, increases by 1 day every 5 years.",chineseTranslation:"年假：每年12天，每5年增加1天。",lastUpdated:"2025-04-01",effectiveDate:"2025-04-01",history:[{date:"2024-01-01",change:"调整产假天数"}],officialUrl:"https://vbpl.chinhphu.vn"},
+  {id:"vn_002",country:"Vietnam",countryCode:"VN",flag:"🇻🇳",region:"Asia",lawName:"Labor Code 2019",article:"S98",category:"工资",importance:"high",originalText:"Overtime rate: 150% weekday, 200% rest day, 300% holiday.",chineseTranslation:"加班费率：工作日150%，休息日200%，节假日300%。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"调整最低工资区域"}],officialUrl:"https://vbpl.chinhphu.vn"},
+  {id:"id_001",country:"Indonesia",countryCode:"ID",flag:"🇮🇩",region:"Asia",lawName:"Job Creation Law",article:"S81",category:"社保规定",importance:"high",originalText:"BPJS: Employment 0.5-1.04%, Health 4%, JKK, JKM mandatory.",chineseTranslation:"社保：就业险0.5-1.04%，健康险4%，工伤险、死亡险强制。",lastUpdated:"2025-06-01",effectiveDate:"2025-06-01",history:[{date:"2024-01-01",change:"扩大社保覆盖范围"}],officialUrl:"https://www.bpjsketenagakerjaan.go.id"},
+  {id:"id_002",country:"Indonesia",countryCode:"ID",flag:"🇮🇩",region:"Asia",lawName:"PP No. 35/2021",article:"S3",category:"离职结算",importance:"high",originalText:"Severance: 1-9 months salary based on service years.",chineseTranslation:"遣散费：根据工龄1-9个月工资。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"调整遣散费计算方式"}],officialUrl:"https://peraturan.go.id"},
+  {id:"in_001",country:"India",countryCode:"IN",flag:"🇮🇳",region:"Asia",lawName:"Code on Wages 2019",article:"S5",category:"工资",importance:"high",originalText:"Minimum wages fixed by government, reviewed every 5 years.",chineseTranslation:"最低工资由政府确定，每5年审查一次。",lastUpdated:"2025-04-01",effectiveDate:"2025-04-01",history:[{date:"2024-01-01",change:"统一全国最低工资标准"}],officialUrl:"https://www.labour.gov.in"},
+  {id:"in_002",country:"India",countryCode:"IN",flag:"🇮🇳",region:"Asia",lawName:"Code on Social Security 2020",article:"S108",category:"社保规定",importance:"high",originalText:"EPF: 12% each. ESI: 0.75% employee, 3.25% employer.",chineseTranslation:"公积金：各12%。社保：员工0.75%，雇主3.25%。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"扩大ESI覆盖范围"}],officialUrl:"https://www.epfindia.gov.in"},
+  {id:"in_003",country:"India",countryCode:"IN",flag:"🇮🇳",region:"Asia",lawName:"Industrial Relations Code 2020",article:"S51",category:"劳动合同",importance:"medium",originalText:"Standing orders mandatory for establishments with 300+ workers.",chineseTranslation:"300人以上企业必须制定常设命令。",lastUpdated:"2025-03-01",effectiveDate:"2025-03-01",history:[{date:"2024-01-01",change:"调整工会注册要求"}],officialUrl:"https://www.labour.gov.in"},
+  {id:"jp_001",country:"Japan",countryCode:"JP",flag:"🇯🇵",region:"Asia",lawName:"Labor Standards Act",article:"S32",category:"工作时间",importance:"high",originalText:"Normal: 8h/day, 40h/week. Premium: 25% overtime, 50% late night, 50% holiday.",chineseTranslation:"正常工时：每天8小时，每周40小时。加班25%，深夜50%，假日50%。",lastUpdated:"2025-04-01",effectiveDate:"2025-04-01",history:[{date:"2024-04-01",change:"上限管理制全面实施"},{date:"2023-04-01",change:"同工同酬法生效"}],officialUrl:"https://www.mhlw.go.jp"},
+  {id:"jp_002",country:"Japan",countryCode:"JP",flag:"🇯🇵",region:"Asia",lawName:"Child Care & Family Care Leave Act",article:"S5",category:"休假",importance:"high",originalText:"Parental leave: up to child age 1. Partial: 67% first 6mo, 50% after.",chineseTranslation:"育儿假：到孩子1岁。前6个月67%，之后50%。",lastUpdated:"2025-04-01",effectiveDate:"2025-04-01",history:[{date:"2024-10-01",change:"扩大适用范围至中小企业"},{date:"2022-04-01",change:"提高育婴假期间薪资补贴"}],officialUrl:"https://www.mhlw.go.jp"},
+  {id:"kr_001",country:"South Korea",countryCode:"KR",flag:"🇰🇷",region:"Asia",lawName:"Labor Standards Act",article:"S50",category:"工作时间",importance:"high",originalText:"Normal: 8h/day, 40h/week. Max 52h total including OT.",chineseTranslation:"正常工时：每天8小时，每周40小时。含加班最多52小时。",lastUpdated:"2025-07-01",effectiveDate:"2025-07-01",history:[{date:"2024-01-01",change:"缩短最长工时"},{date:"2022-01-01",change:"52小时工时制全面实施"}],officialUrl:"https://www.moel.go.kr"},
+  {id:"kr_002",country:"South Korea",countryCode:"KR",flag:"🇰🇷",region:"Asia",lawName:"National Pension Act",article:"S3",category:"社保规定",importance:"high",originalText:"Pension: 4.5% each (employee & employer).",chineseTranslation:"养老金：员工和雇主各4.5%。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"调整缴费基数"}],officialUrl:"https://www.nps.or.kr"},
+  {id:"cn_001",country:"China",countryCode:"CN",flag:"🇨🇳",region:"Asia",lawName:"Labor Contract Law",article:"S19",category:"劳动合同",importance:"high",originalText:"Fixed-term contracts: max 2 consecutive terms, then open-ended.",chineseTranslation:"固定期限合同：最多连续2次，之后应签无固定期限合同。",lastUpdated:"2025-03-01",effectiveDate:"2025-03-01",history:[{date:"2024-01-01",change:"调整试用期规定"},{date:"2022-01-01",change:"灵活用工规范"}],officialUrl:"https://www.mohrss.gov.cn"},
+  {id:"cn_002",country:"China",countryCode:"CN",flag:"🇨🇳",region:"Asia",lawName:"Social Insurance Law",article:"S10",category:"社保规定",importance:"high",originalText:"5 insurances + 1 fund mandatory. Employer ~30%, Employee ~10%.",chineseTranslation:"五险一金强制。雇主约30%，员工约10%。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"调整社保缴费基数"},{date:"2021-01-01",change:"工伤保险费率调整"}],officialUrl:"https://www.mohrss.gov.cn"},
+  {id:"cn_003",country:"China",countryCode:"CN",flag:"🇨🇳",region:"Asia",lawName:"Labor Law",article:"S44",category:"工资",importance:"high",originalText:"OT: 150% weekday, 200% rest day, 300% statutory holiday.",chineseTranslation:"加班：工作日150%，休息日200%，法定节假日300%。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"个税专项附加扣除调整"}],officialUrl:"https://www.mohrss.gov.cn"},
+  {id:"cn_004",country:"China",countryCode:"CN",flag:"🇨🇳",region:"Asia",lawName:"Marriage & Childcare Leave Regs",article:"Various",category:"休假",importance:"medium",originalText:"Maternity: 98 days + local extension. Paternity: 15-30 days.",chineseTranslation:"产假：98天+地方延长。陪产假：15-30天。",lastUpdated:"2025-06-01",effectiveDate:"2025-06-01",history:[{date:"2024-01-01",change:"多地延长产假至158天"},{date:"2023-01-01",change:"育儿假制度推广"}],officialUrl:"https://www.mohrss.gov.cn"},
+  {id:"de_001",country:"Germany",countryCode:"DE",flag:"🇩🇪",region:"Europe",lawName:"Arbeitszeitgesetz",article:"S3",category:"工作时间",importance:"high",originalText:"Max 8h/day, extendable to 10h if averaged 8h over 6 months.",chineseTranslation:"每天最多8小时，如6个月平均8小时可延长至10小时。",lastUpdated:"2025-03-01",effectiveDate:"2025-03-01",history:[{date:"2024-01-01",change:"工时记录义务强化"}],officialUrl:"https://www.bmas.de"},
+  {id:"de_002",country:"Germany",countryCode:"DE",flag:"🇩🇪",region:"Europe",lawName:"Bundesurlaubsgesetz",article:"S1",category:"休假",importance:"high",originalText:"Minimum 20 days paid annual leave. CBAs often provide 25-30.",chineseTranslation:"最少20天带薪年假。集体协议通常25-30天。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"法定假日调整"}],officialUrl:"https://www.bmas.de"},
+  {id:"de_003",country:"Germany",countryCode:"DE",flag:"🇩🇪",region:"Europe",lawName:"Kündigungsschutzgesetz",article:"S1",category:"离职结算",importance:"high",originalText:"Dismissal requires written reasons and works council consultation.",chineseTranslation:"解雇需书面理由并咨询工会。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2024-01-01",change:"数字劳工法调整"}],officialUrl:"https://www.bmas.de"},
+  {id:"fr_001",country:"France",countryCode:"FR",flag:"🇫🇷",region:"Europe",lawName:"Code du Travail",article:"L3121-27",category:"工作时间",importance:"high",originalText:"35h/week standard. OT: 25% first 8h, 50% beyond. 10h/day max.",chineseTranslation:"每周35小时标准工时。加班前8小时25%，超出50%。每天最多10小时。",lastUpdated:"2025-04-01",effectiveDate:"2025-04-01",history:[{date:"2024-01-01",change:"加班补偿方式调整"},{date:"2023-01-01",change:"Right to disconnect强化"}],officialUrl:"https://www.travail-emploi.gouv.fr"},
+  {id:"fr_002",country:"France",countryCode:"FR",flag:"🇫🇷",region:"Europe",lawName:"Code du Travail",article:"L3141-1",category:"休假",importance:"high",originalText:"5 weeks (30 days) paid leave + RTT days.",chineseTranslation:"5周（30天）带薪年假+RTT调休假。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"RTT计算规则调整"}],officialUrl:"https://www.travail-emploi.gouv.fr"},
+  {id:"fr_003",country:"France",countryCode:"FR",flag:"🇫🇷",region:"Europe",lawName:"Sécurité Sociale",article:"L242-1",category:"社保规定",importance:"high",originalText:"Social charges: ~45% employer, ~25% employee.",chineseTranslation:"社保缴费：雇主约45%，员工约25%。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2024-01-01",change:"费率微调"}],officialUrl:"https://www.securite-sociale.fr"},
+  {id:"gb_001",country:"United Kingdom",countryCode:"GB",flag:"🇬🇧",region:"Europe",lawName:"Working Time Regulations",article:"S4",category:"工作时间",importance:"high",originalText:"48h/week max (opt-out possible). 11h rest/day, 24h rest/week.",chineseTranslation:"每周最多48小时（可选择退出）。每天11小时休息，每周24小时休息。",lastUpdated:"2025-06-01",effectiveDate:"2025-06-01",history:[{date:"2024-01-01",change:"零工经济权利扩展"}],officialUrl:"https://www.legislation.gov.uk"},
+  {id:"gb_002",country:"United Kingdom",countryCode:"GB",flag:"🇬🇧",region:"Europe",lawName:"Employment Rights Act 1996",article:"S13",category:"休假",importance:"medium",originalText:"5.6 weeks (28 days) paid annual leave. Bank holidays included.",chineseTranslation:"5.6周（28天）带薪年假。含银行假日。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"节日工资规则调整"}],officialUrl:"https://www.legislation.gov.uk"},
+  {id:"gb_003",country:"United Kingdom",countryCode:"GB",flag:"🇬🇧",region:"Europe",lawName:"National Insurance Act",article:"S1",category:"社保规定",importance:"high",originalText:"NI: Employee 8% (above threshold), Employer 13.8%.",chineseTranslation:"国民保险：员工8%（超门槛），雇主13.8%。",lastUpdated:"2025-04-01",effectiveDate:"2025-04-01",history:[{date:"2024-01-01",change:"NI费率调整"}],officialUrl:"https://www.legislation.gov.uk"},
+  {id:"it_001",country:"Italy",countryCode:"IT",flag:"🇮🇹",region:"Europe",lawName:"D.Lgs. 66/2003",article:"S4",category:"工作时间",importance:"medium",originalText:"48h/week max averaged over 4 months. Daily 13h with breaks.",chineseTranslation:"每周最多48小时（4个月平均）。每天13小时含休息。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"弹性工作制扩展"}],officialUrl:"https://www.gazzettaufficiale.it"},
+  {id:"nl_001",country:"Netherlands",countryCode:"NL",flag:"🇳🇱",region:"Europe",lawName:"Working Hours Act",article:"S2:1",category:"工作时间",importance:"medium",originalText:"12h/day max, 60h/week max. Averaged 48h/week over 16 weeks.",chineseTranslation:"每天最多12小时，每周最多60小时。16周内平均48小时/周。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2024-01-01",change:"远程办公法规调整"}],officialUrl:"https://www.rijksoverheid.nl"},
+  {id:"nl_002",country:"Netherlands",countryCode:"NL",flag:"🇳🇱",region:"Europe",lawName:"Working Hours Act",article:"S4:1",category:"休假",importance:"medium",originalText:"Minimum 20 days (4 weeks) paid leave. Many CBAs provide 25-30.",chineseTranslation:"最少20天（4周）带薪假。许多集体协议提供25-30天。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"假期累积规则调整"}],officialUrl:"https://www.rijksoverheid.nl"},
+  {id:"pl_001",country:"Poland",countryCode:"PL",flag:"🇵🇱",region:"Europe",lawName:"Labor Code",article:"S154",category:"休假",importance:"medium",originalText:"20 days (< 10y service) or 26 days (≥ 10y) paid annual leave.",chineseTranslation:"20天（工龄<10年）或26天（≥10年）带薪年假。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"休假权保障加强"}],officialUrl:"https://isap.sejm.gov.pl"},
+  {id:"es_001",country:"Spain",countryCode:"ES",flag:"🇪🇸",region:"Europe",lawName:"Estatuto de los Trabajadores",article:"S34",category:"工作时间",importance:"high",originalText:"40h/week averaged annually. Max 9h/day. Rest: 1.5h between shifts.",chineseTranslation:"每周40小时（年度平均）。每天最多9小时。班次间休息1.5小时。",lastUpdated:"2025-06-01",effectiveDate:"2025-06-01",history:[{date:"2025-01-01",change:"工时记录义务扩大"},{date:"2024-01-01",change:"数字游民签证推出"}],officialUrl:"https://www.boe.es"},
+  {id:"es_002",country:"Spain",countryCode:"ES",flag:"🇪🇸",region:"Europe",lawName:"Estatuto de los Trabajadores",article:"S38.1",category:"休假",importance:"high",originalText:"Minimum 30 calendar days paid annual leave.",chineseTranslation:"最低30个日历日带薪年假。",lastUpdated:"2025-07-01",effectiveDate:"2025-07-01",history:[{date:"2024-01-01",change:"地区假日协调"}],officialUrl:"https://www.boe.es"},
+  {id:"se_001",country:"Sweden",countryCode:"SE",flag:"🇸🇪",region:"Europe",lawName:"Working Hours Act",article:"§5",category:"工作时间",importance:"high",originalText:"Normal: max 40h/week. CBAs often set 37.5h.",chineseTranslation:"正常工时：每周最多40小时。集体协议通常为37.5小时。",lastUpdated:"2025-03-01",effectiveDate:"2025-03-01",history:[{date:"2024-01-01",change:"弹性工时协议扩展"}],officialUrl:"https://www.riksdagen.se"},
+  {id:"us_001",country:"United States",countryCode:"US",flag:"🇺🇸",region:"Americas",lawName:"Fair Labor Standards Act",article:"S207",category:"工作时间",importance:"high",originalText:"40h/week standard. OT: 1.5x. FLSA salary threshold: $684/week.",chineseTranslation:"每周40小时标准。加班1.5倍。FLSA薪资门槛：$684/周。",lastUpdated:"2025-07-01",effectiveDate:"2025-07-01",history:[{date:"2024-01-01",change:"联邦加班薪资门槛调整"},{date:"2023-01-01",change:"各州最低工资上涨"}],officialUrl:"https://www.dol.gov"},
+  {id:"us_002",country:"United States",countryCode:"US",flag:"🇺🇸",region:"Americas",lawName:"ACA",article:"S4980H",category:"社保规定",importance:"medium",originalText:"Employers 50+ FTEs must offer health insurance or pay penalty.",chineseTranslation:"50人以上企业须提供健康保险或缴纳罚款。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2024-01-01",change:"保费调整"},{date:"2023-01-01",change:"报告要求变更"}],officialUrl:"https://www.irs.gov"},
+  {id:"ca_001",country:"Canada",countryCode:"CA",flag:"🇨🇦",region:"Americas",lawName:"Canada Labour Code",article:"S167",category:"休假",importance:"high",originalText:"Paid vacation: 2 weeks (1-5y), 3 weeks (5+y). Unpaid: 2 weeks.",chineseTranslation:"带薪假：2周（1-5年），3周（5年以上）。无薪假2周。",lastUpdated:"2025-04-01",effectiveDate:"2025-04-01",history:[{date:"2024-01-01",change:"联邦带薪病假实施"},{date:"2023-01-01",change:"10天带薪假权"}],officialUrl:"https://laws-lois.justice.gc.ca"},
+  {id:"br_001",country:"Brazil",countryCode:"BR",flag:"🇧🇷",region:"Americas",lawName:"CLT",article:"S58",category:"工作时间",importance:"high",originalText:"44h/week, 8h/day + 1h lunch. Compressed schedules allowed.",chineseTranslation:"每周44小时，每天8小时+1小时午餐。允许压缩工时。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2024-01-01",change:"远程办公规定细化"},{date:"2023-01-01",change:"平台工经济规范"}],officialUrl:"https://www.planalto.gov.br"},
+  {id:"br_002",country:"Brazil",countryCode:"BR",flag:"🇧🇷",region:"Americas",lawName:"CLT",article:"S614",category:"社保规定",importance:"high",originalText:"INSS: Employee 7.5-14%, Employer 20%. FGTS: 8%.",chineseTranslation:"社保：员工7.5-14%，雇主20%。FGTS：8%。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2024-01-01",change:"社保费率调整"}],officialUrl:"https://www.planalto.gov.br"},
+  {id:"mx_001",country:"Mexico",countryCode:"MX",flag:"🇲🇽",region:"Americas",lawName:"Federal Labor Law",article:"S61",category:"工作时间",importance:"high",originalText:"48h/week, 8h/day. Triple pay on holidays. Sunday premium.",chineseTranslation:"每周48小时，每天8小时。节假日三倍工资。周日津贴。",lastUpdated:"2025-06-01",effectiveDate:"2025-06-01",history:[{date:"2024-01-01",change:"劳动改革实施"},{date:"2023-01-01",change:"最低工资上调"}],officialUrl:"https://www.gob.mx/stps"},
+  {id:"mx_002",country:"Mexico",countryCode:"MX",flag:"🇲🇽",region:"Americas",lawName:"Social Security Law",article:"S15",category:"社保规定",importance:"high",originalText:"IMSS contributions vary by salary bracket. Employer bears most.",chineseTranslation:"IMSS缴费按薪资等级变化。雇主承担大部分。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2024-01-01",change:"缴费基数调整"}],officialUrl:"https://www.gob.mx/imss"},
+  {id:"za_001",country:"South Africa",countryCode:"ZA",flag:"🇿🇦",region:"Africa",lawName:"Basic Conditions of Employment Act",article:"S10",category:"休假",importance:"medium",originalText:"Annual leave: 21 consecutive days (3 weeks) or equal in hours.",chineseTranslation:"年假：连续21天（3周）或等值小时数。",lastUpdated:"2025-01-01",effectiveDate:"2025-01-01",history:[{date:"2023-01-01",change:"病假规定调整"}],officialUrl:"https://www.gov.za"},
+  {id:"au_001",country:"Australia",countryCode:"AU",flag:"🇦🇺",region:"Oceania",lawName:"Fair Work Act 2009",article:"S62",category:"工作时间",importance:"high",originalText:"38h/week standard + reasonable additional hours. Penalty rates apply.",chineseTranslation:"每周38小时标准+合理加班。适用惩罚性费率。",lastUpdated:"2025-07-01",effectiveDate:"2025-07-01",history:[{date:"2024-01-01",change:"最低工资上调5.75%"},{date:"2023-01-01",change:"同工同酬法修正"}],officialUrl:"https://www.fairwork.gov.au"}
+];
+
+// ============ AI MONITOR DATA ============
+const aiMonitorData = [
+  {country:"Singapore",flag:"🇸🇬",title:"Employment Act Amendment — Enhanced Worker Protections",date:"2025-06-15",effective:"2025-08-01",impact:"high",summary:"新加坡更新了雇佣法，加强了对临时工和平台工人的保护。加班上限调整，解雇通知期延长。",summary_en:"Singapore updated the Employment Act with enhanced protections for platform and temporary workers.",modules:["Contracts","Payroll","Leave"],recommendation:"审查所有非全日制员工合同，更新薪酬系统中的加班计算逻辑。",recommendation_en:"Review all part-time contracts. Update payroll OT calculations."},
+  {country:"Thailand",flag:"🇹🇭",title:"Minimum Wage Increase — 400 THB/day Nationwide",date:"2025-06-20",effective:"2025-07-01",impact:"high",summary:"泰国全国最低工资统一调整至400泰铢/天，影响约1000万劳动者。",summary_en:"Thailand unified minimum wage to 400 THB/day, affecting ~10M workers.",modules:["Payroll","Compliance"],recommendation:"立即更新薪酬系统，确保7月1日起所有员工符合新最低工资标准。",recommendation_en:"Update payroll systems immediately for July 1 compliance."},
+  {country:"Malaysia",flag:"🇲🇾",title:"EPF Contribution Rate Adjustment FY2025",date:"2025-06-10",effective:"2025-07-01",impact:"medium",summary:"马来西亚调整EPF缴费比例，雇主部分上调至15%，员工部分维持11%。",summary_en:"Malaysia adjusted EPF rates: employer contribution increased to 15%.",modules:["Payroll","Benefits"],recommendation:"更新工资单模板，通知员工新的缴费比例，调整预算。",recommendation_en:"Update payslips, notify employees, adjust budgets."},
+  {country:"Japan",flag:"🇯🇵",title:"Childcare Leave Reform — Enhanced Paternity Benefits",date:"2025-05-28",effective:"2025-10-01",impact:"medium",summary:"日本大幅改善育儿假制度，男性陪产假从4周延长至12周，薪资补贴提升至80%。",summary_en:"Japan expanded paternity leave from 4 to 12 weeks with 80% pay subsidy.",modules:["Leave","Benefits","Compliance"],recommendation:"更新休假政策手册，制定男性员工育儿假激励计划。",recommendation_en:"Update leave policy handbook. Create paternity leave incentive plan."},
+  {country:"Germany",flag:"🇩🇪",title:"Minimum Wage Increase to €12.82/hour",date:"2025-06-01",effective:"2025-07-01",impact:"high",summary:"德国法定最低工资从€12.41上调至€12.82/小时，影响约600万低薪工人。",summary_en:"Germany raised minimum wage from €12.41 to €12.82/hour.",modules:["Payroll","Compliance"],recommendation:"审查并更新所有低于新最低工资标准的员工薪资。",recommendation_en:"Review and update salaries below new minimum wage."},
+  {country:"France",flag:"🇫🇷",title:"35-Hour Week — Overtime Premium Changes",date:"2025-04-15",effective:"2025-05-01",impact:"medium",summary:"法国调整加班补偿标准，超出35小时后的前8小时加班补偿从25%提升至30%。",summary_en:"France increased first-tier overtime premium from 25% to 30%.",modules:["Payroll","Working Hours"],recommendation:"更新薪酬系统中的加班费率设置。",recommendation_en:"Update overtime rates in payroll systems."},
+  {country:"United Kingdom",flag:"🇬🇧",title:"Zero-Hour Contract Worker Rights",date:"2025-05-10",effective:"2025-06-01",impact:"medium",summary:"英国加强零时合同工人权利，要求雇主提供最低工时保证和提前排班通知。",summary_en:"UK enhanced zero-hour contract rights with minimum hours guarantees.",modules:["Contracts","Compliance"],recommendation:"审查零时合同条款，建立排班通知流程。",recommendation_en:"Review zero-hour contracts. Establish scheduling notice procedures."},
+  {country:"United States",flag:"🇺🇸",title:"FLSA Salary Threshold Increase to $1,128/week",date:"2025-06-25",effective:"2025-07-01",impact:"high",summary:"美国联邦FLSA加班豁免薪资门槛从$684/周上调至$1,128/周，影响数百万白领工人。",summary_en:"US FLSA overtime exemption threshold raised from $684 to $1,128/week.",modules:["Payroll","Contracts","Compliance"],recommendation:"立即审计所有受影响职位，调整薪资或加班分类。",recommendation_en:"Audit all affected positions immediately. Adjust salary or OT classification."},
+  {country:"Brazil",flag:"🇧🇷",title:"CLT Remote Work Framework Update",date:"2025-05-22",effective:"2025-06-15",impact:"medium",summary:"巴西更新CLT远程工作框架，要求雇主提供办公设备津贴并记录每日工时。",summary_en:"Brazil updated CLT remote work framework with equipment allowance requirements.",modules:["Working Hours","Benefits","Contracts"],recommendation:"建立远程办公设备补贴政策，配置每日工时记录系统。",recommendation_en:"Establish remote equipment stipend policy. Configure daily hours tracking."},
+  {country:"India",flag:"🇮🇳",title:"Code on Social Security — Gig Worker Coverage",date:"2025-06-05",effective:"2025-09-01",impact:"high",summary:"印度社会保障法典扩展至零工经济工人，平台企业须为其缴纳社保。",summary_en:"India extended social security to gig workers. Platform companies must contribute.",modules:["Benefits","Compliance"],recommendation:"评估零工经济合作伙伴的社保合规要求，更新供应商合同。",recommendation_en:"Assess gig worker social security requirements. Update vendor contracts."},
+  {country:"China",flag:"🇨🇳",title:"Flexible Employment Labor Regulations",date:"2025-06-18",effective:"2025-08-01",impact:"medium",summary:"中国出台灵活用工新规，明确平台企业劳动关系认定标准和社保缴纳义务。",summary_en:"China issued new flexible employment regulations clarifying labor relationship criteria.",modules:["Contracts","Compliance"],recommendation:"梳理所有灵活用工人员，评估劳动关系认定风险。",recommendation_en:"Audit all flexible workers. Assess labor relationship classification risks."},
+  {country:"South Korea",flag:"🇰🇷",title:"Maximum Working Hours Reduction — 52h to 48h",date:"2025-05-30",effective:"2026-01-01",impact:"high",summary:"韩国将最长工时从52小时缩短至48小时，预计2026年全面实施。",summary_en:"South Korea will reduce maximum working hours from 52h to 48h starting 2026.",modules:["Working Hours","Payroll"],recommendation:"提前制定工时调整计划，评估对业务运营的影响。",recommendation_en:"Plan working hours reduction strategy. Assess business impact."}
+];
+
+// ============ NOTIFICATIONS ============
+const notifData = [
+  {country:"Singapore",flag:"🇸🇬",title:"Employment Act Updated",date:"2025-07-15",isNew:true,effective:"2025-08-01",impact:"high",summary:"新加坡雇佣法更新，加强平台工人保护",modules:["Contracts","Payroll"]},
+  {country:"Thailand",flag:"🇹🇭",title:"Minimum Wage Adjusted",date:"2025-07-14",isNew:true,effective:"2025-07-01",impact:"high",summary:"泰国最低工资调整至400 THB/天",modules:["Payroll"]},
+  {country:"Malaysia",flag:"🇲🇾",title:"EPF Rules Updated",date:"2025-07-12",isNew:true,effective:"2025-07-01",impact:"medium",summary:"马来西亚EPF缴费比例调整",modules:["Payroll","Benefits"]},
+  {country:"Vietnam",flag:"🇻🇳",title:"Social Insurance Circular",date:"2025-07-08",isNew:false,effective:"2025-09-01",impact:"medium",summary:"越南社保条例更新",modules:["Benefits"]},
+  {country:"Japan",flag:"🇯🇵",title:"Childcare Leave Reform",date:"2025-07-05",isNew:false,effective:"2025-10-01",impact:"medium",summary:"日本育儿假制度改善",modules:["Leave"]},
+  {country:"Germany",flag:"🇩🇪",title:"Minimum Wage Increase",date:"2025-07-01",isNew:false,effective:"2025-07-01",impact:"high",summary:"德国最低工资上调至€12.82",modules:["Payroll"]},
+  {country:"United States",flag:"🇺🇸",title:"FLSA Threshold Change",date:"2025-06-25",isNew:false,effective:"2025-07-01",impact:"high",summary:"美国FLSA薪资门槛调整",modules:["Payroll","Contracts"]}
+];
+
+// ============ TREE MENU DATA ============
+const treeData = [
+  {label:'招聘管理',sub:['简历筛选','面试流程','背景调查','Offer管理']},
+  {label:'员工关系',sub:['入职管理','试用期','转正流程','档案管理']},
+  {label:'薪酬管理',sub:['工资结构','奖金制度','股权激励','福利']},
+  {label:'法定缴费类',sub:['社保','公积金','失业保险','工伤保险']},
+  {label:'休假类',sub:['年假','病假','产假','育儿假','婚假','丧假','其他假期']},
+  {label:'强制支付/法定津贴类',sub:['加班费','最低工资','节假日津贴','高温补贴']},
+  {label:'工时与加班',sub:['标准工时','加班规定','弹性工时','远程办公']},
+  {label:'离职与遣散',sub:['解雇保护','遣散费','经济补偿','离职手续']},
+  {label:'个税',sub:['税率','申报','抵扣','跨境税务']},
+  {label:'培训发展',sub:['强制培训','职业发展','技能认证']}
+];
 
 // ============ FILTER STATE ============
-let filteredData = [];
+let filteredData = [...laborLawData];
 let expandedCard = null;
-let compareMode = false;
-let currentCategory = '', currentSubcategory = '', currentBusinessNode = '';
+let currentCategory = '', currentSubcategory = '';
 
-// ============ TREE MENU ============
-function toggleTreeItem(el) { el.classList.toggle('active'); }
-function toggleSubTree(el) { el.classList.toggle('active'); }
+// ============ TREE RENDER ============
+function renderTree() {
+  const el = document.getElementById('treeMenu');
+  el.innerHTML = treeData.map(item => `
+    <div class="tree-item" onclick="toggleTreeItem(this)">
+      <div class="tree-label"><span class="tree-arrow">▶</span><span>${t(item.label)}</span></div>
+      <ul class="tree-sub">${item.sub.map(s => `<li onclick="event.stopPropagation();selectTreeItem(this,'${item.label}','${s}')">${t(s)}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+function toggleTreeItem(el) { el.classList.toggle('open'); }
 function selectTreeItem(el, cat, sub) {
-  el.closest('.tree-sub').querySelectorAll('li').forEach(li => li.classList.remove('active'));
+  el.closest('.tree-sub').querySelectorAll('li').forEach(li=>li.classList.remove('active'));
   el.classList.add('active');
-  currentCategory = cat; currentSubcategory = sub; currentBusinessNode = '';
+  currentCategory = cat; currentSubcategory = sub;
   applyFilters();
 }
 
@@ -665,266 +554,218 @@ function applyFilters() {
   filteredData = laborLawData.filter(item => {
     if (region && item.region !== region) return false;
     if (country && item.country !== country) return false;
-    if (currentBusinessNode && item.businessNode !== currentBusinessNode) return false;
-    else if (currentSubcategory) { if (item.category !== currentCategory || item.subcategory !== currentSubcategory) return false; }
+    if (currentSubcategory && (item.subcategory !== currentSubcategory && item.category !== currentCategory)) return false;
     else if (currentCategory && item.category !== currentCategory) return false;
-    if (search) { const s = `${item.country} ${item.lawName} ${item.article} ${item.category} ${item.subcategory||''} ${item.originalText} ${item.chineseTranslation}`.toLowerCase(); if (!s.includes(search)) return false; }
+    if (search) {
+      const s = `${item.country} ${item.lawName} ${item.article} ${item.category} ${item.chineseTranslation} ${item.originalText}`.toLowerCase();
+      if (!s.includes(search)) return false;
+    }
     return true;
   });
   filteredData.sort((a,b) => sortBy === 'country' ? a.country.localeCompare(b.country) : b.lastUpdated.localeCompare(a.lastUpdated));
-  renderLawList();
-  updateResultCount();
-}
-function updateResultCount() {
-  const n = filteredData.length;
-  const el = document.getElementById('resultCount');
-  el.dataset.n = n;
-  el.textContent = `显示 ${n} 条结果`;
+  renderTimeline();
+  renderRightPanel();
 }
 
 // ============ POPULATE FILTERS ============
 function populateCountryFilter() {
   const sel = document.getElementById('filterCountry');
   const countries = [...new Set(laborLawData.map(d => d.country))].sort();
-  sel.innerHTML = '<option value="">全部</option>' + countries.map(c => `<option value="${c}">${c}</option>`).join('');
-}
-function populateCompareSelects() {
-  const countries = [...new Set(laborLawData.map(d => d.country))].sort();
-  const html = countries.map(c => `<option value="${c}">${c}</option>`).join('');
-  document.getElementById('cmp1').innerHTML = html;
-  document.getElementById('cmp2').innerHTML = html;
-  if (countries.length > 1) document.getElementById('cmp2').selectedIndex = 1;
+  sel.innerHTML = `<option value="" data-i18n="all">${t('all')}</option>` + countries.map(c => `<option value="${c}">${c}</option>`).join('');
 }
 
-// ============ STATS ============
-function updateStats() {
-  const total = laborLawData.length;
-  const countries = new Set(laborLawData.map(d => d.country)).size;
-  const dates = laborLawData.map(d => d.lastUpdated).sort();
+// ============ HERO CHIPS ============
+function renderHeroChips() {
+  const regions = ['All','Asia','Europe','Americas'];
+  document.getElementById('heroChips').innerHTML = regions.map(r => {
+    const label = r === 'All' ? t('all') : r;
+    const val = r === 'All' ? '' : r;
+    return `<div class="chip ${document.getElementById('filterRegion').value===val?'on':''}" onclick="document.getElementById('filterRegion').value='${val}';applyFilters();renderHeroChips()">${label}</div>`;
+  }).join('');
+}
+
+// ============ TIMELINE ============
+function renderTimeline() {
+  const el = document.getElementById('timeline');
+  const grouped = {};
+  filteredData.forEach(item => {
+    const d = new Date(item.lastUpdated);
+    const year = d.getFullYear();
+    const month = d.toLocaleString('en',{month:'short'}).toUpperCase();
+    const key = `${year}-${month}`;
+    if (!grouped[key]) grouped[key] = { year, month, items: [] };
+    grouped[key].items.push(item);
+  });
+  const months = Object.values(grouped);
+  el.innerHTML = months.map(g => `
+    <div class="tl-group">
+      <div class="tl-year">${g.year}</div>
+      <div class="tl-month">${g.month}</div>
+      ${g.items.map(item => `
+        <div class="tl-card ${item.importance} ${expandedCard===item.id?'exp':''}" onclick="toggleTlCard('${item.id}')">
+          <div class="tl-top">
+            <span class="tl-flag">${item.flag}</span>
+            <span class="tl-country">${item.country}</span>
+            <span class="tl-date">${item.lastUpdated}</span>
+          </div>
+          <div class="tl-law">${item.lawName}</div>
+          <div class="tl-article">${t('article')}: ${item.article}</div>
+          <div class="tl-summary">${currentLang==='en'?(item.summary_en||item.chineseTranslation):item.chineseTranslation}</div>
+          <div class="tl-tags">
+            <span class="tl-tag ${item.importance}">${item.importance.toUpperCase()}</span>
+            <span class="tl-tag mod">${item.category}</span>
+          </div>
+          <div class="tl-detail">
+            <h4>${t('aiSummary')}</h4>
+            <p>${currentLang==='en'?(item.summary_en||item.chineseTranslation):item.chineseTranslation}</p>
+            <div class="rec">💡 ${currentLang==='en'?(item.recommendation_en||item.recommendation):item.recommendation||''}</div>
+            <div style="margin-top:6px;font-size:0.62rem;color:var(--text3)">${t('effective')}: ${item.effectiveDate}</div>
+            <div style="margin-top:4px"><a href="${item.officialUrl}" target="_blank" style="color:var(--accent);font-size:0.65rem;text-decoration:none">${t('officialSource')} ↗</a></div>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+function toggleTlCard(id) { expandedCard = expandedCard === id ? null : id; renderTimeline(); }
+
+// ============ RIGHT PANEL ============
+function renderRightPanel() {
+  const total = filteredData.length;
+  const countries = new Set(filteredData.map(d => d.country)).size;
+  const cats = new Set(filteredData.map(d => d.category)).size;
+  const dates = filteredData.map(d => d.lastUpdated).sort();
   const last = dates[dates.length - 1] || '-';
-  document.getElementById('sTotal').textContent = total;
-  document.getElementById('sCountries').textContent = countries;
-  document.getElementById('sUpdated').textContent = last;
   document.getElementById('kTotal').textContent = total;
   document.getElementById('kCountries').textContent = countries;
+  document.getElementById('kCats').textContent = cats;
   document.getElementById('kUpdated').textContent = last;
+
+  // Upcoming dates
+  const now = new Date();
+  const upcoming = filteredData.filter(d => new Date(d.effectiveDate) > now).sort((a,b) => new Date(a.effectiveDate) - new Date(b.effectiveDate)).slice(0, 5);
+  document.getElementById('upcomingList').innerHTML = upcoming.map(item => `
+    <div class="upcoming-item">
+      <div style="display:flex;align-items:center;gap:6px"><span>${item.flag}</span><strong>${item.country}</strong> — ${item.lawName}</div>
+      <div class="upcoming-date">${t('effective')}: ${item.effectiveDate}</div>
+    </div>`).join('') || '<div style="font-size:0.68rem;color:var(--text3);padding:8px 0">No upcoming dates</div>';
 }
 
-// ============ CHART ============
-function renderChart() {
-  const regions = ['Asia','Europe','Americas','Africa','Oceania'];
-  const counts = regions.map(r => laborLawData.filter(d => d.region === r).length);
-  const max = Math.max(...counts);
-  document.getElementById('barChart').innerHTML = regions.map((r,i) => `
-    <div class="bitem">
-      <div class="bar" style="height:${(counts[i]/max)*100}%"><span class="bval">${counts[i]}</span></div>
-      <span class="blbl">${r}</span>
-    </div>`).join('');
+// ============ NOTIFICATIONS ============
+function renderNotifications() {
+  const el = document.getElementById('notifBody');
+  const today = new Date().toISOString().slice(0,10);
+  const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+  const weekAgo = new Date(Date.now()-7*86400000).toISOString().slice(0,10);
+  const groups = { today:[], yesterday:[], thisWeek:[], earlier:[] };
+  notifData.forEach(n => {
+    if (n.date >= today) groups.today.push(n);
+    else if (n.date >= yesterday) groups.yesterday.push(n);
+    else if (n.date >= weekAgo) groups.thisWeek.push(n);
+    else groups.earlier.push(n);
+  });
+  const labels = { today:t('today'), yesterday:t('yesterday'), thisWeek:t('thisWeek'), earlier:t('earlier') };
+  el.innerHTML = Object.entries(groups).filter(([,v])=>v.length).map(([k,items]) => `
+    <div class="notif-group-label">${labels[k]}</div>
+    ${items.map(n => `
+      <div class="notif-item" onclick="onNotifClick('${n.country}')">
+        <span class="ni-flag">${n.flag}</span>
+        <div class="ni-body">
+          <div class="ni-title">${n.title}</div>
+          <div class="ni-sub">${n.summary}</div>
+          <div class="ni-date">${n.date} · ${n.effective}</div>
+        </div>
+        ${n.isNew?'<span class="ni-badge">NEW</span>':''}
+      </div>`).join('')}`).join('');
 }
-
-// ============ LAW LIST (Compact) ============
-function renderLawList() {
-  const grid = document.getElementById('lawList');
-  document.getElementById('llCount').textContent = `(${filteredData.length})`;
-  grid.innerHTML = filteredData.map((item, idx) => `
-    <div class="law-row ${expandedCard===item.id?'exp':''}" onclick="toggleLaw('${item.id}')" style="animation-delay:${idx*0.02}s">
-      <span class="law-flag">${item.flag}</span>
-      <div class="law-info">
-        <div class="law-ctry">${item.country}</div>
-        <div class="law-title">${item.lawName}</div>
-        <div class="law-art">${item.article}</div>
-      </div>
-      <span class="law-cat cat-${item.category}">${item.category}</span>
-    </div>
-    <div class="law-detail">
-      <div class="dl">原文</div><div class="dt">${item.originalText}</div>
-      <div class="dl">中文翻译</div><div class="dt">${item.chineseTranslation}</div>
-      <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap">
-        <a href="${item.officialUrl}" target="_blank" class="hbtn" onclick="event.stopPropagation()" style="font-size:0.68rem;text-decoration:none">官方 ↗</a>
-        <button class="hbtn" onclick="event.stopPropagation();openLawDrawer('${item.id}')" style="font-size:0.68rem">详情</button>
-      </div>
-    </div>`).join('');
-}
-function toggleLaw(id) { expandedCard = expandedCard === id ? null : id; renderLawList(); }
-
-// ============ LAW DRAWER ============
-function openLawDrawer(id) {
-  const item = laborLawData.find(d => d.id === id);
-  if (!item) return;
-  const ai = aiMonitorData.find(a => a.country === item.country);
-  document.getElementById('drawerContent').innerHTML = `
-    <h2>${item.flag} ${item.country} — ${item.lawName}</h2>
-    <div class="field"><div class="field-label">条款</div><div class="field-value">${item.article}</div></div>
-    <div class="field"><div class="field-label">类别</div><div class="field-value"><span class="law-cat cat-${item.category}" style="font-size:0.7rem">${item.category}</span></div></div>
-    <div class="field"><div class="field-label">重要性</div><div class="field-value"><span class="ai-tag ${item.importance}">${item.importance.toUpperCase()}</span></div></div>
-    <div class="field"><div class="field-label">原文</div><div class="field-value">${item.originalText}</div></div>
-    <div class="field"><div class="field-label">中文翻译</div><div class="field-value">${item.chineseTranslation}</div></div>
-    <div class="field"><div class="field-label">变更历史</div><div class="field-value">${item.history.map(h=>`<div style="margin-bottom:4px"><strong>${h.date}</strong> ${h.change}</div>`).join('')}</div></div>
-    <div class="field"><div class="field-label">最后更新</div><div class="field-value">${item.lastUpdated}</div></div>
-    ${ai ? `<div class="field"><div class="field-label">AI 影响分析</div><div class="field-value">${ai.summary}</div>
-    <div class="impact-bar" style="margin-top:6px">
-      <span class="ai-tag ${ai.impact}">${ai.impact.toUpperCase()}</span>
-      ${ai.modules.map(m=>`<span class="ai-tag mod">${m}</span>`).join('')}
-    </div></div>
-    <div class="field"><div class="field-label">AI 建议</div><div class="field-value" style="border-left:3px solid var(--accent);padding-left:8px">${ai.recommendation}</div></div>` : ''}
-    <div class="field"><a href="${item.officialUrl}" target="_blank" class="hbtn" style="text-decoration:none;display:inline-flex">查看官方来源 ↗</a></div>
-  `;
-  document.getElementById('drawerOverlay').classList.add('open');
-  document.getElementById('drawer').classList.add('open');
-}
-function closeDrawer() {
-  document.getElementById('drawerOverlay').classList.remove('open');
-  document.getElementById('drawer').classList.remove('open');
-}
-
-// ============ AI MODULE ============
-function renderAI() {
-  const list = document.getElementById('aiList');
-  list.innerHTML = aiMonitorData.slice(0, 6).map(a => `
-    <div class="ai-item" onclick="openAIDetail('${a.country}')">
-      <div class="ai-item-top">
-        <span class="ai-item-flag">${a.flag}</span>
-        <span class="ai-item-country">${a.country}</span>
-        <span class="ai-item-date">${a.date}</span>
-      </div>
-      <div class="ai-item-title">${a.title}</div>
-      <div class="ai-item-summary">${a.summary}</div>
-      <div class="ai-item-bottom">
-        <span class="ai-tag ${a.impact}">${a.impact.toUpperCase()}</span>
-        ${a.modules.map(m=>`<span class="ai-tag mod">${m}</span>`).join('')}
-      </div>
-    </div>`).join('');
-}
-function toggleAI() { const l = document.getElementById('aiList'); l.style.display = l.style.display === 'none' ? 'block' : (l.style.display ? 'none' : 'none'); }
-function openAIDetail(country) {
+function toggleNotifPanel() { document.getElementById('notifPanel').classList.toggle('open'); }
+function onNotifClick(country) {
   document.getElementById('filterCountry').value = country;
+  document.getElementById('notifPanel').classList.remove('open');
   applyFilters();
+  renderHeroChips();
   const c = globeCountries.find(x => x.name === country);
   if (c) animateCamera(latLonToVec3(c.lat, c.lon, 2.0));
 }
-function openAIDrawer() {
+
+// ============ DRAWER ============
+function openDrawer(id) {
+  const item = laborLawData.find(d => d.id === id);
+  if (!item) return;
+  const ai = aiMonitorData.find(a => a.country === item.country);
+  const lang = currentLang;
   document.getElementById('drawerContent').innerHTML = `
-    <h2>🤖 AI Regulatory Intelligence — 全部监控</h2>
-    <p style="font-size:0.78rem;color:var(--text2);margin-bottom:12px">AI 自动监控全球劳动法变化，提供影响分析和合规建议。</p>
-    ${aiMonitorData.map(a => `
-      <div style="padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px">
-        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
-          <span>${a.flag}</span><strong style="font-size:0.82rem">${a.country}</strong>
-          <span class="ai-tag ${a.impact}" style="margin-left:auto">${a.impact.toUpperCase()}</span>
-        </div>
-        <div style="font-size:0.8rem;font-weight:600;margin-bottom:2px">${a.title}</div>
-        <div style="font-size:0.72rem;color:var(--text2);margin-bottom:4px">${a.summary}</div>
-        <div style="font-size:0.68rem;color:var(--text3)">生效: ${a.effective} · 模块: ${a.modules.join(', ')}</div>
-        <div style="font-size:0.72rem;margin-top:4px;padding:4px 6px;background:var(--card);border-radius:var(--radius-sm);border-left:3px solid var(--accent)">💡 ${a.recommendation}</div>
-      </div>`).join('')}
+    <h2>${item.flag} ${item.country} — ${item.lawName}</h2>
+    <div class="field"><div class="field-label">${t('article')}</div><div class="field-value">${item.article}</div></div>
+    <div class="field"><div class="field-label">${t('impact')}</div><div class="field-value"><span class="tl-tag ${item.importance}">${item.importance.toUpperCase()}</span></div></div>
+    <div class="field"><div class="field-label">${t('原文')}</div><div class="field-value">${item.originalText}</div></div>
+    <div class="field"><div class="field-label">${t('中文翻译')}</div><div class="field-value">${item.chineseTranslation}</div></div>
+    <div class="field"><div class="field-label">${t('变更历史')}</div><div class="field-value">${item.history.map(h=>`<div style="margin-bottom:4px"><strong>${h.date}</strong> ${h.change}</div>`).join('')}</div></div>
+    <div class="field"><div class="field-label">${t('effective')}</div><div class="field-value">${item.effectiveDate}</div></div>
+    ${ai ? `<div class="field"><div class="field-label">🤖 ${t('aiSummary')}</div><div class="field-value">${lang==='en'?(ai.summary_en||ai.summary):ai.summary}</div></div>
+    <div class="field"><div class="field-label">💡 ${t('aiRecommendation')}</div><div class="field-value" style="border-left:3px solid var(--accent);padding-left:8px">${lang==='en'?(ai.recommendation_en||ai.recommendation):ai.recommendation}</div></div>` : ''}
+    <div class="field"><a href="${item.officialUrl}" target="_blank" class="hbtn" style="text-decoration:none;display:inline-flex;margin-top:8px">${t('officialSource')} ↗</a></div>
   `;
   document.getElementById('drawerOverlay').classList.add('open');
   document.getElementById('drawer').classList.add('open');
 }
-
-// ============ COMPARE ============
-function toggleCompare() {
-  compareMode = !compareMode;
-  document.getElementById('cmpBtn').classList.toggle('active', compareMode);
-  document.getElementById('cmpSection').style.display = compareMode ? 'block' : 'none';
-  document.getElementById('cmpBox').classList.toggle('active', compareMode);
-  if (compareMode) updateCompare();
-}
-function updateCompare() {
-  const c1 = document.getElementById('cmp1').value;
-  const c2 = document.getElementById('cmp2').value;
-  const d1 = laborLawData.filter(d => d.country === c1);
-  const d2 = laborLawData.filter(d => d.country === c2);
-  const cats = ['劳动合同','入职离职','离职结算','社保规定','工作时间','休假','工资'];
-  const render = (col, data, country) => {
-    col.innerHTML = `<h3>${country}</h3>` + cats.map(cat => {
-      const items = data.filter(d => d.category === cat);
-      return items.length ? `<div style="margin-bottom:8px"><div style="font-size:0.78rem;color:var(--accent);font-weight:600;margin-bottom:3px">${cat}</div>${items.map(it=>`<div style="padding:4px 6px;margin-bottom:3px;background:var(--card);border-radius:var(--radius-sm);font-size:0.75rem;border-left:3px solid var(--accent)"><strong>${it.article}</strong><br>${it.chineseTranslation}</div>`).join('')}</div>` : '';
-    }).join('');
-  };
-  render(document.getElementById('cmpCol1'), d1, c1);
-  render(document.getElementById('cmpCol2'), d2, c2);
-}
-
-// ============ EXPORT ============
-function toggleExport() { document.getElementById('exportMenu').classList.toggle('open'); }
-function exportJSON() { navigator.clipboard.writeText(JSON.stringify(filteredData, null, 2)).then(() => showToast('已复制 JSON')); document.getElementById('exportMenu').classList.remove('open'); }
-function exportPrint() { document.getElementById('exportMenu').classList.remove('open'); window.print(); }
-document.addEventListener('click', e => { if (!e.target.closest('.export-dd')) document.getElementById('exportMenu').classList.remove('open'); });
+function closeDrawer() { document.getElementById('drawerOverlay').classList.remove('open'); document.getElementById('drawer').classList.remove('open'); }
 
 // ============ SETTINGS ============
-function openSettings() { document.getElementById('settingsOverlay').classList.add('open'); document.getElementById('apiKeyInput').value = localStorage.getItem('laborLawApiKey') || ''; }
+function openSettings() { document.getElementById('settingsOverlay').classList.add('open'); document.getElementById('apiKeyInput').value = localStorage.getItem('laborLawApiKey')||''; }
 function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
-function saveSettings() { localStorage.setItem('laborLawApiKey', document.getElementById('apiKeyInput').value); showToast('已保存'); closeSettings(); }
-async function doTranslate() {
-  const input = document.getElementById('translateInput').value;
-  const result = document.getElementById('translateResult');
-  result.textContent = '翻译中...';
-  const apiKey = localStorage.getItem('laborLawApiKey');
-  if (!apiKey) { result.textContent = '[未设置API Key] 模拟翻译：' + input.substring(0, 50) + '...'; return; }
-  try {
-    const resp = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST', headers: {'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
-      body: JSON.stringify({ model:'deepseek-chat', messages:[{role:'system',content:'专业法律翻译，中英互译。'},{role:'user',content:input}] })
-    });
-    const data = await resp.json();
-    result.textContent = data.choices[0].message.content;
-  } catch(e) { result.textContent = '翻译失败: ' + e.message; }
+function saveSettings() {
+  localStorage.setItem('laborLawApiKey', document.getElementById('apiKeyInput').value);
+  const lang = document.getElementById('settingsLang').value;
+  if (lang !== currentLang) switchLang(lang);
+  showToast(t('save') + ' ✓');
+  closeSettings();
 }
 
 // ============ TOAST ============
-function showToast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2500); }
+function showToast(msg) { const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2500); }
 
 // ============ 3D GLOBE ============
-const regionColors = { Asia:'#3b82f6', Europe:'#10b981', Americas:'#f59e0b', Africa:'#ef4444', Oceania:'#8b5cf6' };
-const regionNames = { Asia:'亚洲', Europe:'欧洲', Americas:'美洲', Africa:'非洲', Oceania:'大洋洲' };
+const regionColors = {Asia:'#3b82f6',Europe:'#10b981',Americas:'#f59e0b',Africa:'#ef4444',Oceania:'#8b5cf6'};
+const regionNames = {Asia:'亚洲',Europe:'欧洲',Americas:'美洲',Africa:'非洲',Oceania:'大洋洲'};
+const regionNamesEn = {Asia:'Asia',Europe:'Europe',Americas:'Americas',Africa:'Africa',Oceania:'Oceania'};
+function getRegionName(r) { return currentLang==='en'||currentLang==='es' ? (regionNamesEn[r]||r) : (regionNames[r]||r); }
 const globeCountries = [
-  {name:'日本',flag:'🇯🇵',lat:36.2,lon:138.2,region:'Asia'},{name:'韩国',flag:'🇰🇷',lat:35.9,lon:127.8,region:'Asia'},
-  {name:'中国',flag:'🇨🇳',lat:35.9,lon:104.2,region:'Asia'},{name:'新加坡',flag:'🇸🇬',lat:1.35,lon:103.8,region:'Asia'},
-  {name:'越南',flag:'🇻🇳',lat:14.1,lon:108.3,region:'Asia'},{name:'马来西亚',flag:'🇲🇾',lat:4.2,lon:108.0,region:'Asia'},
-  {name:'印度尼西亚',flag:'🇮🇩',lat:-0.8,lon:113.9,region:'Asia'},{name:'印度',flag:'🇮🇳',lat:20.6,lon:79.0,region:'Asia'},
-  {name:'泰国',flag:'🇹🇭',lat:15.9,lon:100.9,region:'Asia'},{name:'菲律宾',flag:'🇵🇭',lat:12.9,lon:121.8,region:'Asia'},
-  {name:'德国',flag:'🇩🇪',lat:51.2,lon:10.5,region:'Europe'},{name:'法国',flag:'🇫🇷',lat:46.6,lon:2.2,region:'Europe'},
-  {name:'英国',flag:'🇬🇧',lat:55.4,lon:-3.4,region:'Europe'},{name:'意大利',flag:'🇮🇹',lat:41.9,lon:12.6,region:'Europe'},
-  {name:'西班牙',flag:'🇪🇸',lat:40.5,lon:-3.7,region:'Europe'},{name:'荷兰',flag:'🇳🇱',lat:52.1,lon:5.3,region:'Europe'},
-  {name:'瑞典',flag:'🇸🇪',lat:60.1,lon:18.6,region:'Europe'},{name:'波兰',flag:'🇵🇱',lat:51.9,lon:19.1,region:'Europe'},
-  {name:'美国',flag:'🇺🇸',lat:37.1,lon:-95.7,region:'Americas'},{name:'加拿大',flag:'🇨🇦',lat:56.1,lon:-106.3,region:'Americas'},
-  {name:'巴西',flag:'🇧🇷',lat:-14.2,lon:-51.9,region:'Americas'},{name:'墨西哥',flag:'🇲🇽',lat:23.6,lon:-102.6,region:'Americas'},
-  {name:'阿根廷',flag:'🇦🇷',lat:-38.4,lon:-63.6,region:'Americas'},{name:'南非',flag:'🇿🇦',lat:-30.6,lon:22.9,region:'Africa'},
-  {name:'尼日利亚',flag:'🇳🇬',lat:9.1,lon:8.7,region:'Africa'},{name:'埃及',flag:'🇪🇬',lat:26.8,lon:30.8,region:'Africa'},
-  {name:'加纳',flag:'🇬🇭',lat:7.9,lon:-1.0,region:'Africa'},{name:'坦桑尼亚',flag:'🇹🇿',lat:-6.4,lon:34.9,region:'Africa'},
-  {name:'澳大利亚',flag:'🇦🇺',lat:-25.3,lon:133.8,region:'Oceania'},{name:'新西兰',flag:'🇳🇿',lat:-40.9,lon:174.9,region:'Oceania'}
+  {name:'Japan',flag:'🇯🇵',lat:36.2,lon:138.2,region:'Asia'},{name:'South Korea',flag:'🇰🇷',lat:35.9,lon:127.8,region:'Asia'},
+  {name:'China',flag:'🇨🇳',lat:35.9,lon:104.2,region:'Asia'},{name:'Singapore',flag:'🇸🇬',lat:1.35,lon:103.8,region:'Asia'},
+  {name:'Vietnam',flag:'🇻🇳',lat:14.1,lon:108.3,region:'Asia'},{name:'Malaysia',flag:'🇲🇾',lat:4.2,lon:108.0,region:'Asia'},
+  {name:'Indonesia',flag:'🇮🇩',lat:-0.8,lon:113.9,region:'Asia'},{name:'India',flag:'🇮🇳',lat:20.6,lon:79.0,region:'Asia'},
+  {name:'Thailand',flag:'🇹🇭',lat:15.9,lon:100.9,region:'Asia'},
+  {name:'Germany',flag:'🇩🇪',lat:51.2,lon:10.5,region:'Europe'},{name:'France',flag:'🇫🇷',lat:46.6,lon:2.2,region:'Europe'},
+  {name:'United Kingdom',flag:'🇬🇧',lat:55.4,lon:-3.4,region:'Europe'},{name:'Italy',flag:'🇮🇹',lat:41.9,lon:12.6,region:'Europe'},
+  {name:'Spain',flag:'🇪🇸',lat:40.5,lon:-3.7,region:'Europe'},{name:'Netherlands',flag:'🇳🇱',lat:52.1,lon:5.3,region:'Europe'},
+  {name:'Sweden',flag:'🇸🇪',lat:60.1,lon:18.6,region:'Europe'},{name:'Poland',flag:'🇵🇱',lat:51.9,lon:19.1,region:'Europe'},
+  {name:'United States',flag:'🇺🇸',lat:37.1,lon:-95.7,region:'Americas'},{name:'Canada',flag:'🇨🇦',lat:56.1,lon:-106.3,region:'Americas'},
+  {name:'Brazil',flag:'🇧🇷',lat:-14.2,lon:-51.9,region:'Americas'},{name:'Mexico',flag:'🇲🇽',lat:23.6,lon:-102.6,region:'Americas'},
+  {name:'South Africa',flag:'🇿🇦',lat:-30.6,lon:22.9,region:'Africa'},
+  {name:'Australia',flag:'🇦🇺',lat:-25.3,lon:133.8,region:'Oceania'}
 ];
 
 const landPolys = {
   northAmerica:[[[55,-130],[60,-140],[65,-168],[72,-157],[71,-138],[60,-139],[58,-136],[60,-133],[59,-128],[63,-125],[59,-123],[55,-130]]],
-  centralAmerica:[[[20,-105],[15,-92],[15,-88],[18,-88],[22,-97],[20,-105]]],
   southAmerica:[[[12,-73],[12,-68],[7,-60],[2,-50],[-5,-35],[-10,-37],[-15,-39],[-23,-43],[-34,-54],[-42,-64],[-55,-68],[-54,-72],[-46,-75],[-39,-73],[-30,-71],[-18,-70],[-5,-80],[0,-78],[5,-77],[10,-75],[12,-73]]],
-  europe:[[[48,-5],[43,0],[36,0],[38,-9],[43,-9],[48,-5]]],
   europeMain:[[[48,5],[55,8],[57,10],[63,5],[70,20],[71,28],[60,30],[55,21],[51,17],[48,17],[47,15],[44,12],[42,15],[38,24],[35,25],[36,28],[40,28],[42,26],[45,20],[48,5]]],
   africa:[[[37,10],[37,-1],[35,-5],[33,-8],[28,-13],[22,-17],[15,-17],[5,-8],[4,2],[5,10],[2,10],[-3,12],[-12,14],[-17,12],[-26,15],[-34,18],[-35,20],[-34,26],[-30,32],[-25,35],[-12,44],[-2,51],[2,51],[5,45],[8,50],[12,44],[15,40],[20,37],[25,35],[30,33],[32,32],[33,30],[37,10]]],
   asiaMain:[[[42,26],[45,38],[42,44],[37,36],[30,35],[25,37],[20,40],[15,42],[12,44],[8,50],[5,45],[2,51],[-2,51],[0,55],[5,55],[8,58],[5,62],[8,68],[15,68],[22,70],[28,68],[25,65],[30,60],[35,57],[38,58],[42,53],[44,52],[48,55],[50,58],[52,60],[55,60],[60,57],[63,50],[65,40],[68,35],[70,30],[75,20],[72,15],[77,8],[78,15],[80,10],[82,17],[88,22],[92,22],[97,17],[100,2],[103,2],[105,10],[108,16],[108,22],[110,20],[117,24],[120,30],[122,30],[125,33],[127,37],[130,35],[131,43],[135,35],[138,37],[140,40],[141,43],[143,46],[143,50],[145,54],[140,55],[135,50],[132,43],[130,48],[128,50],[120,53],[110,50],[100,50],[90,50],[80,50],[75,55],[70,60],[65,60],[60,63],[55,68],[50,68],[48,70],[44,68],[40,65],[42,26]]],
-  seAsia:[[[20,98],[18,100],[14,100],[10,99],[8,98],[2,103],[1,104],[1,108],[6,106],[10,106],[10,109],[16,108],[21,106],[22,104],[20,98]]],
-  australia:[[[-12,131],[-14,127],[-15,124],[-20,119],[-22,114],[-26,113],[-32,115],[-35,117],[-37,140],[-38,146],[-37,150],[-33,152],[-28,153],[-24,153],[-19,146],[-15,145],[-12,142],[-11,136],[-12,131]]],
-  newZealand:[[[-35,173],[-37,175],[-41,176],[-46,167],[-46,169],[-44,172],[-42,174],[-39,177],[-35,173]]]
+  australia:[[[-12,131],[-14,127],[-15,124],[-20,119],[-22,114],[-26,113],[-32,115],[-35,117],[-37,140],[-38,146],[-37,150],[-33,152],[-28,153],[-24,153],[-19,146],[-15,145],[-12,142],[-11,136],[-12,131]]]
 };
 
-function createEarthTexture() {
-  const W=2048,H=1024,c=document.createElement('canvas'); c.width=W; c.height=H;
+function createEarthTexture(){
+  const W=2048,H=1024,c=document.createElement('canvas');c.width=W;c.height=H;
   const ctx=c.getContext('2d');
   const bg=ctx.createLinearGradient(0,0,0,H);
   bg.addColorStop(0,'#0a1628');bg.addColorStop(0.3,'#0d2137');bg.addColorStop(0.5,'#0f2847');bg.addColorStop(0.7,'#0d2137');bg.addColorStop(1,'#0a1628');
-  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
-  for(let i=0;i<40000;i++){ctx.fillStyle=`rgba(20,60,110,${Math.random()*0.04})`;ctx.fillRect(Math.random()*W,Math.random()*H,Math.random()*4+1,1);}
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   ctx.strokeStyle='rgba(40,80,140,0.12)';ctx.lineWidth=0.8;
   for(let lon=-180;lon<=180;lon+=30){const x=(lon+180)/360*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let lat=-90;lat<=90;lat+=30){const y=(90-lat)/180*H;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  ctx.fillStyle='rgba(180,210,230,0.25)';ctx.fillRect(0,0,W,H*0.04);ctx.fillRect(0,H*0.96,W,H*0.04);
   function toXY(lon,lat){return[(lon+180)/360*W,(90-lat)/180*H];}
   function drawPoly(pts,fill,stroke){if(pts.length<3)return;ctx.beginPath();const[sx,sy]=toXY(pts[0][0],pts[0][1]);ctx.moveTo(sx,sy);for(let i=1;i<pts.length;i++){const[x,y]=toXY(pts[i][0],pts[i][1]);ctx.lineTo(x,y);}ctx.closePath();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.2;ctx.stroke();}}
-  const lg=ctx.createLinearGradient(0,H*0.2,0,H*0.8);lg.addColorStop(0,'#2d5a3a');lg.addColorStop(0.25,'#3a7a4a');lg.addColorStop(0.5,'#4a8a3a');lg.addColorStop(0.75,'#5a7a2a');lg.addColorStop(1,'#4a6a2a');
+  const lg=ctx.createLinearGradient(0,H*0.2,0,H*0.8);lg.addColorStop(0,'#2d5a3a');lg.addColorStop(0.5,'#4a8a3a');lg.addColorStop(1,'#4a6a2a');
   Object.values(landPolys).forEach(polys=>polys.forEach(pts=>drawPoly(pts,lg,'rgba(80,160,120,0.6)')));
-  for(let i=0;i<30000;i++){const x=Math.random()*W,y=Math.random()*H;const px=ctx.getImageData(x,y,1,1).data;if(px[1]>60&&px[1]>px[2]){const b=0.6+Math.random()*0.4;ctx.fillStyle=`rgba(${Math.floor(px[0]*b)},${Math.floor(px[1]*b)},${Math.floor(px[2]*b)},0.3)`;ctx.fillRect(x,y,Math.random()*3+1,Math.random()*2+1);}}
   return new THREE.CanvasTexture(c);
 }
 function createStars(){const g=new THREE.BufferGeometry(),v=new Float32Array(6000*3);for(let i=0;i<6000;i++){const r=50+Math.random()*100,t=Math.random()*Math.PI*2,p=Math.acos(2*Math.random()-1);v[i*3]=r*Math.sin(p)*Math.cos(t);v[i*3+1]=r*Math.sin(p)*Math.sin(t);v[i*3+2]=r*Math.cos(p);}g.setAttribute('position',new THREE.BufferAttribute(v,3));return new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:0.15,transparent:true,opacity:0.7,sizeAttenuation:true}));}
@@ -934,14 +775,13 @@ let scene,camera,renderer,globeGroup,raycaster,mouse,countryMeshes=[],hoveredMes
 function latLonToVec3(lat,lon,r){const phi=(90-lat)*Math.PI/180,theta=(lon+180)*Math.PI/180;return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta));}
 
 function renderGlobe(){
-  const canvas=document.getElementById('globeCanvas'),W=canvas.clientWidth||400,H=canvas.clientHeight||440;
+  const canvas=document.getElementById('globeCanvas'),W=canvas.clientWidth||220,H=canvas.clientHeight||180;
   canvas.width=W*window.devicePixelRatio;canvas.height=H*window.devicePixelRatio;
   scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(45,W/H,0.1,1000);camera.position.z=3.0;
   renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(window.devicePixelRatio);renderer.setSize(W,H);
-  const isDark=getTheme()==='dark';renderer.setClearColor(isDark?0x020810:0xf0f2f5,1);
+  renderer.setClearColor(getTheme()==='dark'?0x020810:0xe8edf5,1);
   scene.add(new THREE.AmbientLight(0x223344,2.0));
   const sun=new THREE.DirectionalLight(0xffffff,1.4);sun.position.set(5,3,5);scene.add(sun);
-  const fill=new THREE.DirectionalLight(0x4488cc,0.5);fill.position.set(-5,-2,-3);scene.add(fill);
   scene.add(createStars());
   globeGroup=new THREE.Group();scene.add(globeGroup);
   globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1,64,64),new THREE.MeshPhongMaterial({map:createEarthTexture(),shininess:15,specular:new THREE.Color(0x111122)})));
@@ -949,19 +789,16 @@ function renderGlobe(){
   raycaster=new THREE.Raycaster();mouse=new THREE.Vector2();
   globeCountries.forEach(c=>{
     const pos=latLonToVec3(c.lat,c.lon,1.015),count=laborLawData.filter(d=>d.country===c.name).length,col=new THREE.Color(regionColors[c.region]);
-    const mesh=new THREE.Mesh(new THREE.SphereGeometry(0.014+count*0.0025,12,12),new THREE.MeshBasicMaterial({color:col}));
+    const mesh=new THREE.Mesh(new THREE.SphereGeometry(0.014+count*0.002,12,12),new THREE.MeshBasicMaterial({color:col}));
     mesh.position.copy(pos);mesh.userData={country:c.name,flag:c.flag,region:c.region,count};globeGroup.add(mesh);countryMeshes.push(mesh);
-    const ring=new THREE.Mesh(new THREE.RingGeometry(0.022+count*0.003,0.032+count*0.004,24),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:0.3,side:THREE.DoubleSide}));
-    ring.position.copy(pos);ring.lookAt(new THREE.Vector3(0,0,0));ring.userData={isRing:true};globeGroup.add(ring);
   });
   const controls=new THREE.OrbitControls(camera,renderer.domElement);
   controls.enableDamping=true;controls.dampingFactor=0.08;controls.rotateSpeed=0.5;controls.zoomSpeed=0.8;controls.minDistance=1.6;controls.maxDistance=6;controls.enablePan=false;
   controls.addEventListener('start',()=>{autoRotate=false;});controls.addEventListener('end',()=>{setTimeout(()=>autoRotate=true,3000);});
   window._gc=controls;
   canvas.addEventListener('mousemove',onGlobeMove);canvas.addEventListener('click',onGlobeClick);
-  window.addEventListener('resize',onGlobeResize);
-  document.getElementById('globeLegend').innerHTML=Object.entries(regionColors).map(([r,c])=>`<span class="gleg" onclick="filterByRegion('${r}')"><span class="gdot" style="background:${c}"></span>${regionNames[r]||r}</span>`).join('');
-  (function anim(){requestAnimationFrame(anim);if(autoRotate)globeGroup.rotation.y+=0.0015;const t=Date.now()*0.003;countryMeshes.forEach(m=>{m.scale.setScalar(m===hoveredMesh?1.5+Math.sin(t)*0.2:m.userData.country===selectedCountry?1.3+Math.sin(t*0.8)*0.1:1);});controls.update();renderer.render(scene,camera);})();
+  document.getElementById('globeLegend').innerHTML=Object.entries(regionColors).map(([r,c])=>`<span class="gleg" onclick="filterByRegion('${r}')"><span class="gdot" style="background:${c}"></span>${getRegionName(r)}</span>`).join('');
+  (function anim(){requestAnimationFrame(anim);if(autoRotate)globeGroup.rotation.y+=0.0015;countryMeshes.forEach(m=>{m.scale.setScalar(m===hoveredMesh?1.5:m.userData.country===selectedCountry?1.3:1);});controls.update();renderer.render(scene,camera);})();
 }
 
 function onGlobeMove(e){
@@ -969,21 +806,19 @@ function onGlobeMove(e){
   raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects(countryMeshes),tt=document.getElementById('globeTip');
   if(hits.length>0){hoveredMesh=hits[0].object;renderer.domElement.style.cursor='pointer';const d=hoveredMesh.userData;
     document.getElementById('gtFlag').textContent=d.flag;document.getElementById('gtName').textContent=d.country;
-    document.getElementById('gtRegion').textContent=regionNames[d.region];document.getElementById('gtCount').textContent=`${d.count} 条法规`;
+    document.getElementById('gtRegion').textContent=getRegionName(d.region);document.getElementById('gtCount').textContent=`${d.count} ${t('laws')}`;
     tt.style.left=(e.clientX+16)+'px';tt.style.top=(e.clientY-10)+'px';tt.classList.add('show');
   }else{hoveredMesh=null;renderer.domElement.style.cursor='grab';tt.classList.remove('show');}
 }
-function onGlobeClick(e){const rect=renderer.domElement.getBoundingClientRect();mouse.x=((e.clientX-rect.left)/rect.width)*2-1;mouse.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects(countryMeshes);if(hits.length>0)selectGlobeCountry(hits[0].object.userData.country);else clearGlobeSelection();}
-function selectGlobeCountry(country){selectedCountry=country;document.getElementById('filterCountry').value=country;const d=globeCountries.find(c=>c.name===country);if(d)document.getElementById('filterRegion').value=d.region;document.getElementById('globeStatus').innerHTML=`<strong>${d?.flag||''} ${country}</strong>`;applyFilters();}
-function clearGlobeSelection(){selectedCountry=null;document.getElementById('filterCountry').value='';document.getElementById('filterRegion').value='';document.getElementById('globeStatus').innerHTML='';applyFilters();}
-function filterByRegion(region){document.getElementById('filterRegion').value=region;applyFilters();const cs=globeCountries.filter(c=>c.region===region);if(cs.length){const aLat=cs.reduce((s,c)=>s+c.lat,0)/cs.length,aLon=cs.reduce((s,c)=>s+c.lon,0)/cs.length;animateCamera(latLonToVec3(aLat,aLon,3.0));document.getElementById('globeStatus').innerHTML=`<strong>${regionNames[region]}</strong> ${cs.length} 个国家`;}}
-function filterByCountry(country){selectGlobeCountry(country);const c=globeCountries.find(x=>x.name===country);if(c)animateCamera(latLonToVec3(c.lat,c.lon,2.0));}
+function onGlobeClick(e){const rect=renderer.domElement.getBoundingClientRect();mouse.x=((e.clientX-rect.left)/rect.width)*2-1;mouse.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects(countryMeshes);if(hits.length>0)selectGlobeCountry(hits[0].object.userData.country);}
+function selectGlobeCountry(country){selectedCountry=country;document.getElementById('filterCountry').value=country;applyFilters();renderHeroChips();const c=globeCountries.find(x=>x.name===country);if(c)animateCamera(latLonToVec3(c.lat,c.lon,2.0));}
+function filterByRegion(region){document.getElementById('filterRegion').value=region;applyFilters();renderHeroChips();const cs=globeCountries.filter(c=>c.region===region);if(cs.length){const aLat=cs.reduce((s,c)=>s+c.lat,0)/cs.length,aLon=cs.reduce((s,c)=>s+c.lon,0)/cs.length;animateCamera(latLonToVec3(aLat,aLon,3.0));}}
 function animateCamera(targetPos){const start=camera.position.clone(),dur=800,t0=Date.now();autoRotate=false;(function step(){const t=Math.min((Date.now()-t0)/dur,1),e=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;camera.position.lerpVectors(start,targetPos,e);camera.lookAt(0,0,0);if(t<1)requestAnimationFrame(step);else setTimeout(()=>autoRotate=true,4000);})();}
-function onGlobeResize(){const c=document.getElementById('globeCanvas'),W=c.clientWidth,H=c.clientHeight;if(!W||!H)return;camera.aspect=W/H;camera.updateProjectionMatrix();renderer.setSize(W,H);}
+window.addEventListener('resize',()=>{const c=document.getElementById('globeCanvas'),W=c.clientWidth,H=c.clientHeight;if(!W||!H)return;camera.aspect=W/H;camera.updateProjectionMatrix();renderer.setSize(W,H);});
 
 // ============ INIT ============
 function init(){
-  populateCountryFilter();populateCompareSelects();renderGlobe();updateStats();renderChart();applyFilters();renderAI();updateLabels();
+  populateCountryFilter();renderTree();renderGlobe();renderHeroChips();applyFilters();renderNotifications();
 }
 init();
 </script>
